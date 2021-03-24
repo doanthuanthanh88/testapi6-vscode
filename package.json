@@ -1,0 +1,119 @@
+{
+	"name": "testapi6",
+	"displayName": "testapi6",
+	"description": "Test api then export to document base on yaml files",
+	"version": "1.1.0",
+	"engines": {
+		"vscode": "^1.50.0"
+	},
+	"categories": [
+		"Debuggers",
+		"Snippets"
+	],
+	"activationEvents": [
+		"onCommand:testapi6.run"
+	],
+	"main": "./out/extension.js",
+	"icon": "icon.png",
+	"author": {
+		"name": "Đoàn Thuận Thành",
+		"email": "doanthuanthanh88@gmail.com"
+	},
+	"contributes": {
+		"snippets": [
+			{
+				"language": "yaml",
+				"path": "testapi6.snippet.json"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "testapi6.run",
+				"key": "ctrl+shift+t"
+			},
+			{
+				"command": "testapi6.run",
+				"key": "alt+cmd+t"
+			}
+		],
+		"commands": [
+			{
+				"command": "testapi6.run",
+				"title": "Start testapi6"
+			},
+			{
+				"command": "testapi6.guide",
+				"title": "Open guide testapi6"
+			}
+		],
+		"menus": {
+			"editor/title/context": [
+				{
+					"when": "resourceLangId == yaml",
+					"command": "testapi6.run",
+					"group": "test"
+				}
+			],
+			"editor/context": [
+				{
+					"when": "resourceLangId == yaml",
+					"command": "testapi6.run",
+					"group": "test"
+				},
+				{
+					"when": "resourceLangId == yaml",
+					"command": "testapi6.guide",
+					"group": "test"
+				}
+			],
+			"explorer/context": [
+				{
+					"when": "resourceLangId == yaml",
+					"command": "testapi6.run",
+					"group": "test"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"pub": "yarn clean && yarn vscode:prepublish && yarn package && yarn pub:to",
+		"commit": "git add . && git commit -m 'update libs' && git push",
+		"clean": "rm -rf ./yarn.lock && yarn install && yarn upgrade testapi6",
+		"pub:to": "vsce publish",
+		"package": "vsce package",
+		"vscode:prepublish": "yarn run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "yarn run compile && yarn run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.0",
+		"@types/node": "^12.11.7",
+		"@types/node-fetch": "^2.5.7",
+		"@types/vscode": "^1.50.0",
+		"@typescript-eslint/eslint-plugin": "^4.1.1",
+		"@typescript-eslint/parser": "^4.1.1",
+		"eslint": "^7.9.0",
+		"glob": "^7.1.6",
+		"mocha": "^8.1.3",
+		"typescript": "^4.0.2",
+		"vsce": "^1.87.0",
+		"vscode-test": "^1.4.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:doanthuanthanh88/testapi6-vscode.git"
+	},
+	"dependencies": {
+		"chalk": "^4.1.0",
+		"escalade": "^3.1.1",
+		"node-fetch": "^2.6.1",
+		"testapi6": "^1.1.0"
+	},
+	"publisher": "doanthuanthanh88",
+	"homepage": "https://github.com/doanthuanthanh88",
+	"license": "MIT"
+}

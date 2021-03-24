@@ -1,0 +1,189 @@
+{
+  "Make a request": {
+    "prefix": "!api",
+    "body": [
+      "- Api:",
+      "    title: ${1}",
+      "    method: ${2|GET,POST,PUT,PATCH,DELETE,HEAD|}",
+      "    baseURL: $3",
+      "    url: $4",
+      "    validate:",
+      "      - Status: [200,204]"
+    ],
+    "description": "Make request to API"
+  },
+  "Make a GET request": {
+    "prefix": "!get",
+    "body": [
+      "- Get:",
+      "    title: ${1}",
+      "    url: $2",
+      "    validate:",
+      "      - Status: [200,204]"
+    ],
+    "description": "Make a GET request"
+  },
+  "Make a POST request": {
+    "prefix": "!post",
+    "body": [
+      "- Post:",
+      "    title: ${1}",
+      "    url: $2",
+      "    body: $3",
+      "    validate:",
+      "      - Status: [200,204]"
+    ],
+    "description": "Make a POST request"
+  },
+  "Make a PUT request": {
+    "prefix": "!put",
+    "body": [
+      "- Put:",
+      "    title: ${1}",
+      "    url: $2",
+      "    body: $3",
+      "    validate:",
+      "      - Status: [200,204]"
+    ],
+    "description": "Make a PUT request"
+  },
+  "Make a PATCH request": {
+    "prefix": "!patch",
+    "body": [
+      "- Patch:",
+      "    title: ${1}",
+      "    url: $2",
+      "    body: $3",
+      "    validate:",
+      "      - Status: [200,204]"
+    ],
+    "description": "Make a PATCH request"
+  },
+  "Make a DELETE request": {
+    "prefix": "!delete",
+    "body": [
+      "- Delete:",
+      "    title: ${1}",
+      "    url: $2",
+      "    validate:",
+      "      - !status 200,204"
+    ],
+    "description": "Make a DELETE request"
+  },
+  "Make a HEAD request": {
+    "prefix": "!head",
+    "body": [
+      "- Head:",
+      "    title: ${1}",
+      "    url: $2",
+      "    validate:",
+      "      - !status 200,204"
+    ],
+    "description": "Make a HEAD request"
+  },
+  "Create group steps": {
+    "prefix": "!group",
+    "body": [
+      "- Group:",
+      "    title: ${1}",
+      "    description: ${2}",
+      "    vars: ${3}",
+      "    steps:",
+      "      - $4"
+    ],
+    "description": "Create group steps"
+  },
+  "Create util function": {
+    "prefix": "!utils",
+    "body": [
+      "- Utils: | ",
+      "         function ${0}(arg) {",
+      "           $0",
+      "         }"
+    ],
+    "description": "Create util function"
+  },
+  "Create define function": {
+    "prefix": "!define",
+    "body": [
+      "- Define: | ",
+      "         $0"
+    ],
+    "description": "Create util function"
+  },
+  "Create validation": {
+    "prefix": "!validate",
+    "body": [
+      "- Validate:",
+      "    title: ${1}",
+      "    func: ${2|match,in,schema,length|}",
+      "    args:",
+      "      - $3",
+      "      - $4"
+    ],
+    "description": "Create validation"
+  },
+  "Create external execution": {
+    "prefix": "!exec",
+    "body": [
+      "- Exec:",
+      "    title: ${1}",
+      "    var: $2",
+      "    args: $0"
+    ],
+    "description": "Run external execution"
+  },
+  "Create input": {
+    "prefix": "!input",
+    "body": [
+      "- Input:",
+      "    title: ${1}",
+      "    required: ${2:false}",
+      "    var: $0"
+    ],
+    "description": "Input from keyboard"
+  },
+  "Create a testcase": {
+    "prefix": "!testcase",
+    "body": [
+      "title: $1",
+      "version: ${2:1.0.0}",
+      "description: $3",
+      "developer: $4",
+      "servers:",
+      "  Development: $5",
+      "# debug: false",
+      "vars:",
+      "  url: $5",
+      "templates:",
+      "  - Api:",
+      "      ->: base",
+      "      baseURL: \\${url}",
+      "steps:",
+      "  $0",
+      "",
+      "  # Export to document",
+      "  - Group:",
+      "      title: Generate document",
+      "      description: --------------------------------------",
+      "      steps:",
+      "        - DocSwagger:",
+      "            saveTo: DOC/doc.swagger.yaml",
+      "            headers: []",
+      "            responseHeaders: [\"content-type\"]",
+      "            raw:",
+      "              tags:",
+      "                - name: DEFAULT",
+      "                  description: Handle business logic",
+      "              components:",
+      "                securitySchemes:",
+      "                  bearerAuth:",
+      "                    type: http",
+      "                    scheme: bearer",
+      "                    bearerFormat: JWT",
+      "        - DocMarkdown:",
+      "            saveTo: DOC/doc.markdown.md"
+    ],
+    "description": "Create a testcase"
+  }
+}
