@@ -82,6 +82,11 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.7.tgz#98a993516c859eb0d5c4c8f098317a9ea68db9ad"
   integrity sha512-cxWFQVseBm6O9Gbw1IWb8r6OS4OhSt3hPZLkFApLjM8TEXROBuQGLAH2i2gZpcXdLBIrpXuTDhH7Vbm1iXmNGA==
 
+"@types/lodash@^4.14.168":
+  version "4.14.168"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"
+  integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
+
 "@types/minimatch@*":
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.4.tgz#f0ec25dbf2f0e4b18647313ac031134ca5b24b21"
@@ -1989,9 +1994,9 @@ table@^6.0.4:
     string-width "^4.2.0"
 
 testapi6@^1.1.0:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.1.2.tgz#4d605afa94b48df29f3a19be080821a58653dd81"
-  integrity sha512-htoXFbehVYw8t6opOA3TnI87ouyI/hPNuKIyG3a5LnLlIQrFheA4stA72/7Wq+JwzXsqlWJ3HFRIv1/70Ug07A==
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.1.3.tgz#6be0f9c7882501394cf0a45778b94c825c157fc7"
+  integrity sha512-Zjq8p5QsiamW1EpYDf4G0N/vDrLp87cyqvhcdOp7LkHKZd4c4kzmnMaHLObctr4aSTF0kkkun0Gx0PYnj+LZUA==
   dependencies:
     axios "^0.21.0"
     chai "^4.3.3"

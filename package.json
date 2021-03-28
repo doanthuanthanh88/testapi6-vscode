@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.2",
+	"version": "1.1.3",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -12,7 +12,8 @@
 	],
 	"activationEvents": [
 		"onView:testApi6",
-		"onCommand:testapi6.run"
+		"onCommand:testapi6.run",
+		"onCommand:testapi6.add"
 	],
 	"main": "./out/extension.js",
 	"icon": "icon.png",
@@ -139,6 +140,7 @@
 	"devDependencies": {
 		"@types/glob": "^7.1.3",
 		"@types/js-yaml": "^4.0.0",
+		"@types/lodash": "^4.14.168",
 		"@types/mocha": "^8.0.0",
 		"@types/node": "^12.11.7",
 		"@types/node-fetch": "^2.5.7",

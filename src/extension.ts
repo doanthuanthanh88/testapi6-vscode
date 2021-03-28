@@ -54,8 +54,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const provider = new TestApi6Provider()
 
-	vscode.window.registerTreeDataProvider('testApi6', provider);
-
 	context.subscriptions.push(vscode.commands.registerCommand('testapi6.guide', () => {
 		vscode.env.openExternal(vscode.Uri.parse('https://github.com/doanthuanthanh88/testapi6'));
 	}))
@@ -100,7 +98,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	}))
 
 	context.subscriptions.push(vscode.commands.registerCommand('testapi6.add', async (h: any) => {
-		let scenarioPath = (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
+		const scenarioPath = (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
 		vscode.commands.executeCommand('testapi6.edit', new TestApiRootItem(basename(scenarioPath), scenarioPath, vscode.TreeItemCollapsibleState.Collapsed, 0))
 	}))
 
@@ -173,6 +171,8 @@ export async function activate(context: vscode.ExtensionContext) {
 			console.error(err)
 		}
 	}))
+
+	vscode.window.registerTreeDataProvider('testApi6', provider);
 
 }
 
