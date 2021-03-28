@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.0",
+	"version": "1.1.2",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -11,6 +11,7 @@
 		"Snippets"
 	],
 	"activationEvents": [
+		"onView:testApi6",
 		"onCommand:testapi6.run"
 	],
 	"main": "./out/extension.js",
@@ -20,6 +21,14 @@
 		"email": "doanthuanthanh88@gmail.com"
 	},
 	"contributes": {
+		"views": {
+			"explorer": [
+				{
+					"id": "testApi6",
+					"name": "TestAPI6 Bookmark"
+				}
+			]
+		},
 		"snippets": [
 			{
 				"language": "yaml",
@@ -42,35 +51,74 @@
 				"title": "Start testapi6"
 			},
 			{
+				"command": "testapi6.open",
+				"title": "Open"
+			},
+			{
+				"command": "testapi6.add",
+				"title": "Bookmark testapi6"
+			},
+			{
+				"command": "testapi6.refresh",
+				"title": "Refresh"
+			},
+			{
+				"command": "testapi6.del",
+				"title": "Delete"
+			},
+			{
+				"command": "testapi6.edit",
+				"title": "Edit"
+			},
+			{
 				"command": "testapi6.guide",
 				"title": "Open guide testapi6"
 			}
 		],
 		"menus": {
-			"editor/title/context": [
-				{
-					"when": "resourceLangId == yaml",
-					"command": "testapi6.run",
-					"group": "test"
-				}
-			],
 			"editor/context": [
 				{
 					"when": "resourceLangId == yaml",
 					"command": "testapi6.run",
-					"group": "test"
+					"group": "testapi6"
 				},
 				{
 					"when": "resourceLangId == yaml",
 					"command": "testapi6.guide",
-					"group": "test"
+					"group": "testapi6"
+				},
+				{
+					"when": "resourceLangId == yaml",
+					"command": "testapi6.add",
+					"group": "testapi6"
 				}
 			],
 			"explorer/context": [
 				{
 					"when": "resourceLangId == yaml",
 					"command": "testapi6.run",
-					"group": "test"
+					"group": "testapi6"
+				}
+			],
+			"view/title": [
+				{
+					"command": "testapi6.refresh",
+					"when": "view == testApi6"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "testapi6.del",
+					"when": "view == testApi6"
+				},
+				{
+					"command": "testapi6.edit",
+					"when": "view == testApi6"
+				},
+				{
+					"command": "testapi6.open",
+					"when": "view == testApi6",
+					"group": "inline"
 				}
 			]
 		}
@@ -90,6 +138,7 @@
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.3",
+		"@types/js-yaml": "^4.0.0",
 		"@types/mocha": "^8.0.0",
 		"@types/node": "^12.11.7",
 		"@types/node-fetch": "^2.5.7",
@@ -110,6 +159,7 @@
 	"dependencies": {
 		"chalk": "^4.1.0",
 		"escalade": "^3.1.1",
+		"js-yaml": "^4.0.0",
 		"node-fetch": "^2.6.1",
 		"testapi6": "^1.1.0"
 	},

@@ -4,6 +4,8 @@ import * as vscode from 'vscode';
 import fetch from 'node-fetch'
 import * as path from 'path'
 import { existsSync, readFileSync } from 'fs';
+import { TestApi6Provider, TestApiRootItem } from './TreeDataProvider';
+import { basename } from 'path';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -50,8 +52,56 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	})
 
+	const provider = new TestApi6Provider()
+
+	vscode.window.registerTreeDataProvider('testApi6', provider);
+
 	context.subscriptions.push(vscode.commands.registerCommand('testapi6.guide', () => {
 		vscode.env.openExternal(vscode.Uri.parse('https://github.com/doanthuanthanh88/testapi6'));
+	}))
+
+	context.subscriptions.push(vscode.commands.registerCommand('testapi6.open', async (h: any) => {
+		const a = await vscode.workspace.openTextDocument(vscode.Uri.parse("file://" + h.src))
+		await vscode.window.showTextDocument(a)
+		// const e = await vscode.window.showTextDocument(a, 1, false)
+		// e.edit(edit => {
+		// 	edit.insert(new vscode.Position(0, 0), "Your advertisement here");
+		// })
+	}))
+
+	context.subscriptions.push(vscode.commands.registerCommand('testapi6.del', (h: any) => {
+		provider.remove(h)
+	}))
+
+	context.subscriptions.push(vscode.commands.registerCommand('testapi6.refresh', (h: any) => {
+		provider.refresh()
+	}))
+
+	context.subscriptions.push(vscode.commands.registerCommand('testapi6.edit', async (h: any) => {
+		let scenarioPath = h.src
+		const inp = vscode.window.createInputBox()
+		inp.placeholder = h.label
+		inp.show()
+		const label = await new Promise<string>(r => {
+			let isAccepted: boolean
+			inp.onDidAccept(() => {
+				if (!isAccepted) {
+					inp.hide()
+					r(inp.value || '')
+				}
+			})
+			inp.onDidHide(() => {
+				isAccepted = true
+				inp.hide()
+				r(inp.value || '')
+			})
+		})
+		if (label) provider.upsert(label, scenarioPath)
+	}))
+
+	context.subscriptions.push(vscode.commands.registerCommand('testapi6.add', async (h: any) => {
+		let scenarioPath = (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
+		vscode.commands.executeCommand('testapi6.edit', new TestApiRootItem(basename(scenarioPath), scenarioPath, vscode.TreeItemCollapsibleState.Collapsed, 0))
 	}))
 
 	context.subscriptions.push(vscode.commands.registerCommand('testapi6.run', async (h: any) => {
