@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.3",
+	"version": "1.1.5",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -49,15 +49,22 @@
 		"commands": [
 			{
 				"command": "testapi6.run",
-				"title": "Start testapi6"
+				"category": "testapi6",
+				"title": "Start"
+			},
+			{
+				"command": "testapi6.guide",
+				"category": "testapi6",
+				"title": "Guide"
+			},
+			{
+				"command": "testapi6.add",
+				"category": "testapi6",
+				"title": "Bookmark"
 			},
 			{
 				"command": "testapi6.open",
 				"title": "Open"
-			},
-			{
-				"command": "testapi6.add",
-				"title": "Bookmark testapi6"
 			},
 			{
 				"command": "testapi6.refresh",
@@ -72,8 +79,8 @@
 				"title": "Edit"
 			},
 			{
-				"command": "testapi6.guide",
-				"title": "Open guide testapi6"
+				"command": "testapi6.runinview",
+				"title": "Run"
 			}
 		],
 		"menus": {
@@ -118,6 +125,11 @@
 				},
 				{
 					"command": "testapi6.open",
+					"when": "view == testApi6",
+					"group": "inline"
+				},
+				{
+					"command": "testapi6.runinview",
 					"when": "view == testApi6",
 					"group": "inline"
 				}

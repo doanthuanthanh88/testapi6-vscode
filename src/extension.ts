@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import fetch from 'node-fetch'
 import * as path from 'path'
 import { existsSync, readFileSync } from 'fs';
-import { TestApi6Provider, TestApiRootItem } from './TreeDataProvider';
+import { TestApi6Item, TestApi6Provider, TestApiRootItem } from './TreeDataProvider';
 import { basename } from 'path';
 
 // this method is called when your extension is activated
@@ -72,6 +72,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	}))
 
 	context.subscriptions.push(vscode.commands.registerCommand('testapi6.refresh', (h: any) => {
+		provider.load()
 		provider.refresh()
 	}))
 
@@ -97,6 +98,11 @@ export async function activate(context: vscode.ExtensionContext) {
 		if (label) provider.upsert(label, scenarioPath)
 	}))
 
+	context.subscriptions.push(vscode.commands.registerCommand('testapi6.runinview', async (h: any) => {
+		const scenarioPath = h.src
+		vscode.commands.executeCommand('testapi6.run', new TestApiRootItem(basename(scenarioPath), scenarioPath, vscode.TreeItemCollapsibleState.Collapsed, 0))
+	}))
+
 	context.subscriptions.push(vscode.commands.registerCommand('testapi6.add', async (h: any) => {
 		const scenarioPath = (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
 		vscode.commands.executeCommand('testapi6.edit', new TestApiRootItem(basename(scenarioPath), scenarioPath, vscode.TreeItemCollapsibleState.Collapsed, 0))
@@ -117,7 +123,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			// 		}
 			// 	}
 			// }
-			let scenarioPath = (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
+			let scenarioPath = h instanceof TestApi6Item ? h.src : (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
 			if (!scenarioPath?.endsWith('.yaml') && !scenarioPath?.endsWith('.yml') && !scenarioPath?.endsWith('.encrypt')) {
 				if (!lastScenario) return
 				scenarioPath = lastScenario
