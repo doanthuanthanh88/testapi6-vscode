@@ -9,7 +9,9 @@
     // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
     "typescript.tsc.autoDetect": "off",
     "yaml.customTags": [
-        "!upload scalar"
+        "!upload scalar",
+        "!remove scalar",
+        "!keep scalar"
     ],
     "yaml.schemas": {
         "https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/schema.json": "*.yaml"
