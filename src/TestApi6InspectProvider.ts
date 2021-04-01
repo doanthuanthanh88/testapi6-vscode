@@ -12,8 +12,9 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
   async load(f: string) {
     const root = await load(new InputYamlFile(f)) as any
     await root.setup()
+    this.list.push(new TestApi6InspectItem('Scenario file', f, {}, vscode.TreeItemCollapsibleState.None))
     this.list.push(new TestApi6InspectItem('Common', 'Global components', context.Vars, vscode.TreeItemCollapsibleState.Collapsed))
-    this.list.push(new TestApi6InspectItem('---------------------------', '', context.Vars, vscode.TreeItemCollapsibleState.None))
+    this.list.push(new TestApi6InspectItem('---------------------------', '', {}, vscode.TreeItemCollapsibleState.None))
     this.list.push(...root.group.steps.map((tag: any) => {
       const tagName = tag.tagName
       if (tagName === 'Group') {

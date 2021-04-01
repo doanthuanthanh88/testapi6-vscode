@@ -75,7 +75,6 @@ export async function activate(context: vscode.ExtensionContext) {
   const inspectProvider = new TestApi6InspectProvider()
   const provider = new TestApi6Provider()
 
-  await inspectProvider.load(getFileRun('/Users/doanthuanthanh/code/gapo/periodic-survey/test/question.yaml'))
   vscode.window.registerTreeDataProvider('testApi6Inspect', inspectProvider);
   vscode.window.registerTreeDataProvider('testApi6', provider);
 
@@ -131,6 +130,12 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.add', async (h: any) => {
     const scenarioPath = (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
     vscode.commands.executeCommand('testapi6.edit', new TestApiRootItem(basename(scenarioPath), scenarioPath, vscode.TreeItemCollapsibleState.Collapsed, 0))
+  }))
+
+  context.subscriptions.push(vscode.commands.registerCommand('testapi6.inspect', async (h: any) => {
+    let scenarioPath = h instanceof TestApi6Item ? h.src : (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
+    scenarioPath = getFileRun(scenarioPath)
+    await inspectProvider.load(scenarioPath)
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.run', async (h: any) => {
