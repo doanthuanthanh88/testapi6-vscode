@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.9",
+	"version": "1.1.11",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -12,6 +12,7 @@
 	],
 	"activationEvents": [
 		"onView:testApi6",
+		"onView:testApi6Inspect",
 		"onCommand:testapi6.run",
 		"onCommand:testapi6.add"
 	],
@@ -24,6 +25,10 @@
 	"contributes": {
 		"views": {
 			"explorer": [
+				{
+					"id": "testApi6Inspect",
+					"name": "TestAPI6 Inspect"
+				},
 				{
 					"id": "testApi6",
 					"name": "TestAPI6 Bookmark"
@@ -175,7 +180,7 @@
 		"escalade": "^3.1.1",
 		"js-yaml": "^4.0.0",
 		"node-fetch": "^2.6.1",
-		"testapi6": "^1.1.0"
+		"testapi6": "1.1.13-3"
 	},
 	"publisher": "doanthuanthanh88",
 	"homepage": "https://github.com/doanthuanthanh88",
