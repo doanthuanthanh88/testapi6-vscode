@@ -47,7 +47,7 @@ function getFileRun(scenarioPath: string) {
     let [firstLine = '',] = readFileSync(scenarioPath).toString().split('\n')
     firstLine = firstLine.trim()
     const [cmd = '', file] = firstLine.split(':')
-    if (file && ['#run', '# run'].includes(cmd.toLowerCase())) {
+    if (file && '#run' === cmd.split(' ').join('').toLowerCase()) {
       const newFile = path.join(scenarioPath, file.trim())
       if (existsSync(newFile)) {
         scenarioPath = newFile
