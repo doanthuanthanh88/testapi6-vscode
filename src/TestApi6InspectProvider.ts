@@ -1,8 +1,5 @@
 import * as vscode from 'vscode';
 import { load, InputYamlFile } from 'testapi6/dist/main'
-import { Templates } from 'testapi6/dist/components/Templates'
-import { Tag } from 'testapi6/dist/components/Tag';
-import { context } from 'testapi6/dist/Context';
 
 export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6InspectItem> {
   private list = [] as any[]
@@ -10,18 +7,17 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
   constructor() { }
 
   async load(f: string) {
+    this.list = []
     const root = await load(new InputYamlFile(f)) as any
     await root.setup()
-    this.list.push(new TestApi6InspectItem('Scenario file', f, {}, vscode.TreeItemCollapsibleState.None))
-    this.list.push(new TestApi6InspectItem('Common', 'Global components', context.Vars, vscode.TreeItemCollapsibleState.Collapsed))
-    this.list.push(new TestApi6InspectItem('---------------------------', '', {}, vscode.TreeItemCollapsibleState.None))
-    this.list.push(...root.group.steps.map((tag: any) => {
+    for (const tag of root.group.steps) {
       const tagName = tag.tagName
       if (tagName === 'Group') {
-        return new TestApi6InspectItem(tagName, '', tag, vscode.TreeItemCollapsibleState.Expanded)
+        this.list.push(new TestApi6InspectItem(tagName, tag.title, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.Collapsed))
+      } else if (tag.title || tag.depends) {
+        this.list.push(new TestApi6InspectItem(tagName, tag.title, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.None))
       }
-      return new TestApi6InspectItem(tagName, '', tag, vscode.TreeItemCollapsibleState.None)
-    }))
+    }
     this.refresh()
   }
 
@@ -41,38 +37,31 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
     if (!element) {
       list = this.list
     } else if (element.tag === 'Group') {
-      list = element.info.steps.map((tag: any) => {
+      element.info.steps.filter((t: any) => t.title || t.depends).forEach((tag: any) => {
         const tagName = tag.tagName
         if (tagName === 'Group') {
-          return new TestApi6InspectItem(tagName, '', tag, vscode.TreeItemCollapsibleState.Expanded)
+          list.push(new TestApi6InspectItem(tagName, tag.title, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.Collapsed))
         }
-        if (tagName === 'Validator') {
-          return new TestApi6InspectItem(tagName, '', tag, vscode.TreeItemCollapsibleState.Expanded)
+        if (tag.depends) {
+          tag.validate?.filter((e: any) => e?.title).forEach((tag: any) => {
+            list.push(new TestApi6InspectItem(tagName, `   ◦ ${tag.title}`, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.None))
+          })
+        } else {
+          list.push(new TestApi6InspectItem(tagName, `▶ ${tag.title}`, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.None))
         }
-        return new TestApi6InspectItem(tagName, '', tag, vscode.TreeItemCollapsibleState.None)
       })
-    } else if (element.tag === 'Global Templates') {
-      element.info.forEach((v: Tag, k: string) => {
-        list.push(new TestApi6InspectItem(`${v.tagName} #${k}`, v.title || '', {}, vscode.TreeItemCollapsibleState.None))
-      })
-    } else if (element.tag === 'Global Utils') {
-      Object.keys(element.info).forEach((k: string) => {
-        list.push(new TestApi6InspectItem(`${k}`, '', {}, vscode.TreeItemCollapsibleState.None))
-      })
-    } else if (element.tag === 'Global Validators') {
-      Object.keys(element.info).forEach((k: string) => {
-        list.push(new TestApi6InspectItem(`${k}`, '', {}, vscode.TreeItemCollapsibleState.None))
-      })
-    } else if (element.tag === 'Global Vars') {
-      Object.keys(element.info).forEach((k: string) => {
-        list.push(new TestApi6InspectItem(`${k}`, typeof element.info[k], {}, vscode.TreeItemCollapsibleState.None))
-      })
-    } else if (element.tag === 'Common') {
-      list.push(new TestApi6InspectItem('Global Templates', '', Templates.Templates, vscode.TreeItemCollapsibleState.Collapsed))
-      list.push(new TestApi6InspectItem('Global Utils', '', context.Utils, vscode.TreeItemCollapsibleState.Collapsed))
-      list.push(new TestApi6InspectItem('Global Validators', '', context.Validate, vscode.TreeItemCollapsibleState.Collapsed))
-      list.push(new TestApi6InspectItem('Global Vars', '', context.Vars, vscode.TreeItemCollapsibleState.Expanded))
     }
+    // else if (element.tag === 'Import') {
+    //   const root = await load(new InputYamlFile(element.info['src'])) as any
+    //   await root.setup()
+    //   return root.group.steps.filter((t: any) => t.title).map((tag: any) => {
+    //     const tagName = tag.tagName
+    //     if (tagName === 'Group') {
+    //       return new TestApi6InspectItem(tagName, tag.title, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.Collapsed)
+    //     }
+    //     return new TestApi6InspectItem(tagName, tag.title, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.None)
+    //   })
+    // }
     //  else {
     //   const root = load(readFileSync(element.src).toString(), { schema: SCHEMA }) as any
     //   let items = [] as any[]
@@ -94,20 +83,18 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
 export class TestApi6InspectItem extends vscode.TreeItem {
   constructor(
     public readonly tag: string,
+    public readonly title: string,
     readonly des: string,
     public readonly info: any,
     public collapsibleState: vscode.TreeItemCollapsibleState,
   ) {
     super('', collapsibleState);
-    const id = this.info['-->']?.join('|') || ''
-    this.label = this.tag + (id ? ' #' : '') + id
-    if (['Api', 'Get', 'Post', 'Put', 'Delete', 'Patch', 'Head'].includes(this.tag) && this.info.title === null) {
-      this.label = '-'
-      this.description = this.info.validate.map((e: any) => typeof e === 'object' && e.title).filter((e: string) => e).join(' AND ')
-      this.tooltip = this.info.validate.map((e: any) => typeof e === 'object' && e.title).filter((e: string) => e).map((e: string) => `- ${e}`).join('\n')
+    if (this.info?.depends) {
+      this.label = '- ' + this.info.validate?.map((v: any) => v.title).filter((e: string) => e).join(' | ')
+      this.description = this.description
     } else {
-      this.description = des || this.info.description || ''
-      this.tooltip = (this.info.title || '') + (this.description ? `\n${this.description}` : '')
+      this.label = this.title
+      this.description = this.description
     }
   }
 

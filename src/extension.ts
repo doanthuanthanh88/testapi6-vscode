@@ -13,6 +13,7 @@ import { TestApi6InspectProvider } from './TestApi6InspectProvider';
 let ter = new Map<string, vscode.Terminal>()
 const nodeBin = path.join(require.resolve('testapi6'), '..', '..', 'bin/index.js')
 let lastScenario: string
+let lastInspect: string
 
 async function setConfig() {
   // Setting yaml config
@@ -34,28 +35,47 @@ async function setConfig() {
       "https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/schema.json": "*.yaml"
     }, vscode.ConfigurationTarget.Workspace)
   } catch (err) {
-    vscode.window.showErrorMessage('Please install YAML Language support first')
-    throw err
+    vscode.window.showWarningMessage('Please install YAML Language support first')
+    // throw err
   }
 }
 
-function getFileRun(scenarioPath: string) {
+function getLine(lines: string[], i: number) {
+  // Get first line
+  if (i === 0) {
+    for (const l of lines) {
+      if (l && l.trim().length) return l.trim()
+    }
+  } else if (i === -1) {
+    for (let i = lines.length - 1; i >= 0; i--) {
+      const l = lines[i]
+      if (l && l.trim().length) return l.trim()
+    }
+  }
+  return ''
+}
+
+function getFileRun(scenarioPath: string, lastScenario: string) {
+  let isClose = false
+  let _lastScenario = lastScenario
   if (!scenarioPath?.endsWith('.yaml') && !scenarioPath?.endsWith('.yml') && !scenarioPath?.endsWith('.encrypt')) {
-    if (!lastScenario) return ''
-    scenarioPath = lastScenario
+    if (!_lastScenario) return {}
+    scenarioPath = _lastScenario
   } else {
-    let [firstLine = '',] = readFileSync(scenarioPath).toString().split('\n')
-    firstLine = firstLine.trim()
+    const lines = readFileSync(scenarioPath).toString().split('\n')
+    const firstLine = getLine(lines, 0)
+    const lastLine = getLine(lines, -1)
+    isClose = /\#\s*close/i.test(lastLine)
     const [cmd = '', file] = firstLine.split(':')
-    if (file && '#run' === cmd.split(' ').join('').toLowerCase()) {
+    if (file && /\#\s*run/i.test(cmd)) {
       const newFile = path.join(scenarioPath, file.trim())
       if (existsSync(newFile)) {
         scenarioPath = newFile
       }
     }
-    lastScenario = scenarioPath
+    _lastScenario = scenarioPath
   }
-  return lastScenario
+  return { scenarioFile: _lastScenario, isClose }
 }
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -134,8 +154,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.inspect', async (h: any) => {
     let scenarioPath = h instanceof TestApi6Item ? h.src : (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
-    scenarioPath = getFileRun(scenarioPath)
-    await inspectProvider.load(scenarioPath)
+    const { scenarioFile = '' } = getFileRun(scenarioPath, lastInspect)
+    await inspectProvider.load(scenarioFile)
+    lastInspect = scenarioFile
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.run', async (h: any) => {
@@ -154,9 +175,9 @@ export async function activate(context: vscode.ExtensionContext) {
       // 	}
       // }
       let scenarioPath = h instanceof TestApi6Item ? h.src : (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
-      scenarioPath = getFileRun(scenarioPath)
+      const { scenarioFile = '', isClose = false } = getFileRun(scenarioPath, lastScenario)
       let decryptPassword = ''
-      if (scenarioPath?.endsWith('.encrypt')) {
+      if (scenarioFile?.endsWith('.encrypt')) {
         const inp = vscode.window.createInputBox()
         inp.placeholder = 'Enter password to decrypt file'
         inp.show()
@@ -175,7 +196,7 @@ export async function activate(context: vscode.ExtensionContext) {
           })
         })
       }
-      const name = path.basename(scenarioPath)
+      const name = path.basename(scenarioFile)
       const terName = 'testapi6:' + name
       let terObj = ter.get(terName)
       if (!terObj) {
@@ -184,10 +205,15 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       terObj.show(true)
       // if (content.length > 0) {
-      // 	scenarioPath = path.join(os.tmpdir(), name)
-      // 	writeFileSync(scenarioPath, content.join('\n'))
+      // 	lastScenario = path.join(os.tmpdir(), name)
+      // 	writeFileSync(lastScenario, content.join('\n'))
       // }
-      terObj.sendText(`${nodeBin} ${scenarioPath} ${decryptPassword}`)
+      lastScenario = scenarioFile
+      terObj.sendText(`${nodeBin} ${scenarioFile} ${decryptPassword}`)
+      if (isClose) {
+        terObj.sendText(`exit`, false)
+        vscode.commands.executeCommand('workbench.action.terminal.focus')
+      }
     } catch (err: any) {
       vscode.window.showErrorMessage('Error: ' + err.message + ' ❌❌❌')
       console.error(err)

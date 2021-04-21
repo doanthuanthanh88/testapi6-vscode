@@ -75,20 +75,24 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
     let list = []
     if (!element) list = this.list
     else {
-      const root = load(readFileSync(element.src).toString(), { schema: SCHEMA }) as any
-      let items = [] as any[]
-      if (Array.isArray(root)) {
-        items = root
-      } else if (root.steps && Array.isArray(root.steps)) {
-        items = root.steps
+      try {
+        const root = load(readFileSync(element.src).toString(), { schema: SCHEMA }) as any
+        let items = [] as any[]
+        if (Array.isArray(root)) {
+          items = root
+        } else if (root.steps && Array.isArray(root.steps)) {
+          items = root.steps
+        }
+        const importItems = items.filter(tag => {
+          return typeof tag === 'object' && Object.keys(tag)[0] === 'Import'
+        })
+        list = importItems.map(tag => {
+          const file = tag[Object.keys(tag)[0]]
+          return new TestApiChildItem(file, path.join(path.dirname(element.src), file), vscode.TreeItemCollapsibleState.Collapsed, element.level + 1)
+        })
+      } catch (err) {
+        return [new TestApiChildItem('❌ Could not load this file', err.message, vscode.TreeItemCollapsibleState.None, -1)]
       }
-      const importItems = items.filter(tag => {
-        return typeof tag === 'object' && Object.keys(tag)[0] === 'Import'
-      })
-      list = importItems.map(tag => {
-        const file = tag[Object.keys(tag)[0]]
-        return new TestApiChildItem(file, path.join(path.dirname(element.src), file), vscode.TreeItemCollapsibleState.Collapsed, element.level + 1)
-      })
     }
 
     for (const l of list) {
