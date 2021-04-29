@@ -1,130 +1,188 @@
 {
-  "Make a request": {
-    "prefix": "!api",
+  "Make a HTTP request": {
+    "prefix": "@api",
     "body": [
       "- Api:",
       "    title: ${1}",
       "    method: ${2|GET,POST,PUT,PATCH,DELETE,HEAD|}",
       "    baseURL: $3",
       "    url: $4",
+      "    debug: details",
       "    validate:",
       "      - Status: [200,204]"
     ],
     "description": "Make request to API"
   },
-  "Make a GET request": {
-    "prefix": "!get",
+  "Make a Http Get request": {
+    "prefix": "@get",
     "body": [
       "- Get:",
       "    title: ${1}",
-      "    url: $2",
+      "    baseURL: $2",
+      "    url: $3",
+      "    debug: details",
       "    validate:",
-      "      - Status: [200,204]"
+      "      - Status: 200"
     ],
-    "description": "Make a GET request"
+    "description": "Make a Http Get request"
   },
-  "Make a POST request": {
-    "prefix": "!post",
-    "body": [
-      "- Post:",
-      "    title: ${1}",
-      "    url: $2",
-      "    body: $3",
-      "    validate:",
-      "      - Status: [200,204]"
-    ],
-    "description": "Make a POST request"
-  },
-  "Make a PUT request": {
-    "prefix": "!put",
-    "body": [
-      "- Put:",
-      "    title: ${1}",
-      "    url: $2",
-      "    body: $3",
-      "    validate:",
-      "      - Status: [200,204]"
-    ],
-    "description": "Make a PUT request"
-  },
-  "Make a PATCH request": {
-    "prefix": "!patch",
-    "body": [
-      "- Patch:",
-      "    title: ${1}",
-      "    url: $2",
-      "    body: $3",
-      "    validate:",
-      "      - Status: [200,204]"
-    ],
-    "description": "Make a PATCH request"
-  },
-  "Make a DELETE request": {
-    "prefix": "!delete",
-    "body": [
-      "- Delete:",
-      "    title: ${1}",
-      "    url: $2",
-      "    validate:",
-      "      - !status 200,204"
-    ],
-    "description": "Make a DELETE request"
-  },
-  "Make a HEAD request": {
-    "prefix": "!head",
+  "Make a Http Head request": {
+    "prefix": "@head",
     "body": [
       "- Head:",
       "    title: ${1}",
-      "    url: $2",
+      "    baseURL: $2",
+      "    url: $3",
+      "    debug: details",
       "    validate:",
-      "      - !status 200,204"
+      "      - Status: 201"
     ],
-    "description": "Make a HEAD request"
+    "description": "Make a Http Head request"
   },
-  "Create group steps": {
-    "prefix": "!group",
+  "Make a Http Delete request": {
+    "prefix": "@delete",
+    "body": [
+      "- Delete:",
+      "    title: ${1}",
+      "    baseURL: $2",
+      "    url: $3",
+      "    debug: details",
+      "    validate:",
+      "      - Status: 201"
+    ],
+    "description": "Make a Http Delete request"
+  },
+  "Make a Http Post request": {
+    "prefix": "@post",
+    "body": [
+      "- Post:",
+      "    title: ${1}",
+      "    baseURL: $2",
+      "    url: $3",
+      "    debug: details",
+      "    body: $4",
+      "    validate:",
+      "      - Status: 201"
+    ],
+    "description": "Make a Http Post request"
+  },
+  "Make a Http Put request": {
+    "prefix": "@put",
+    "body": [
+      "- Put:",
+      "    title: ${1}",
+      "    baseURL: $2",
+      "    url: $3",
+      "    debug: details",
+      "    body: $4",
+      "    validate:",
+      "      - Status: 201"
+    ],
+    "description": "Make a Http Put request"
+  },
+  "Make a Http Patch request": {
+    "prefix": "@patch",
+    "body": [
+      "- Patch:",
+      "    title: ${1}",
+      "    baseURL: $2",
+      "    url: $3",
+      "    debug: details",
+      "    body: $4",
+      "    validate:",
+      "      - Status: 201"
+    ],
+    "description": "Make a Http Patch request"
+  },
+  "Create a group": {
+    "prefix": "@group",
     "body": [
       "- Group:",
       "    title: ${1}",
-      "    description: ${2}",
-      "    vars: ${3}",
       "    steps:",
-      "      - $4"
+      "      - $2"
     ],
-    "description": "Create group steps"
+    "description": "Create a group which includes steps"
   },
-  "Create util function": {
-    "prefix": "!utils",
+  "Create a pause": {
+    "prefix": "@pause",
     "body": [
-      "- Utils: | ",
-      "         function ${0}(arg) {",
-      "           $0",
-      "         }"
+      "- Pause:"
     ],
-    "description": "Create util function"
+    "description": "Create a pause"
   },
-  "Create define function": {
-    "prefix": "!define",
+  "Create a delay": {
+    "prefix": "@delay",
     "body": [
-      "- Define: | ",
-      "         $0"
+      "- Pause:",
+      "    time: $1"
     ],
-    "description": "Create util function"
+    "description": "Create a delay"
   },
-  "Create validation": {
-    "prefix": "!validate",
+  "Create a echo": {
+    "prefix": "@echo",
+    "body": [
+      "- Echo: $1"
+    ],
+    "description": "Create a echo"
+  },
+  "Create a import": {
+    "prefix": "@import",
+    "body": [
+      "- Import: $1"
+    ],
+    "description": "Create a import"
+  },
+  "Create a require external modules": {
+    "prefix": "@require",
+    "body": [
+      "- Require:",
+      "    root: ${1:.config/yarn/global/node_modules}",
+      "    modules:",
+      "      - ${2:testapi6-mongo/dist/index.js}"
+    ],
+    "description": "Create a import"
+  },
+  "Create document generator": {
+    "prefix": "@gendoc",
+    "body": [
+      "- Group:",
+      "    title: Generate document",
+      "    description: --------------------------------------",
+      "    steps:",
+      "      - DocSwagger:",
+      "          saveTo: DOC/doc.swagger.yaml",
+      "          headers: []",
+      "          responseHeaders: [\"content-type\"]",
+      "          raw:",
+      "            tags:",
+      "              - name: DEFAULT",
+      "                description: Handle business logic",
+      "            components:",
+      "              securitySchemes:",
+      "                bearerAuth:",
+      "                  type: http",
+      "                  scheme: bearer",
+      "                  bearerFormat: JWT",
+      "      - DocMarkdown:",
+      "          saveTo: DOC/doc.markdown.md"
+    ],
+    "description": "Generate document"
+  },
+  "Create a validator": {
+    "prefix": "@validate",
     "body": [
       "- Validate:",
       "    title: ${1}",
-      "    func: ${2|match,in,schema,length|}",
+      "    func: ${2}",
       "    args:",
       "      - $3",
       "      - $4"
     ],
-    "description": "Create validation"
+    "description": "Create a validator"
   },
   "Create external execution": {
-    "prefix": "!exec",
+    "prefix": "@exec",
     "body": [
       "- Exec:",
       "    title: ${1}",
@@ -134,7 +192,7 @@
     "description": "Run external execution"
   },
   "Create input": {
-    "prefix": "!input",
+    "prefix": "@input",
     "body": [
       "- Input:",
       "    title: ${1}",
@@ -144,7 +202,7 @@
     "description": "Input from keyboard"
   },
   "Create a testcase": {
-    "prefix": "!testcase",
+    "prefix": "@testcase",
     "body": [
       "title: $1",
       "version: ${2:1.0.0}",
@@ -160,29 +218,7 @@
       "      ->: base",
       "      baseURL: \\${url}",
       "steps:",
-      "  $0",
-      "",
-      "  # Export to document",
-      "  - Group:",
-      "      title: Generate document",
-      "      description: --------------------------------------",
-      "      steps:",
-      "        - DocSwagger:",
-      "            saveTo: DOC/doc.swagger.yaml",
-      "            headers: []",
-      "            responseHeaders: [\"content-type\"]",
-      "            raw:",
-      "              tags:",
-      "                - name: DEFAULT",
-      "                  description: Handle business logic",
-      "              components:",
-      "                securitySchemes:",
-      "                  bearerAuth:",
-      "                    type: http",
-      "                    scheme: bearer",
-      "                    bearerFormat: JWT",
-      "        - DocMarkdown:",
-      "            saveTo: DOC/doc.markdown.md"
+      "  - $0"
     ],
     "description": "Create a testcase"
   }

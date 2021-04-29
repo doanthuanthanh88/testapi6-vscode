@@ -114,13 +114,10 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   }
 
-  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
-    const file = vscode.window.activeTextEditor?.document.fileName || ''
+  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor((a) => {
+    const file = vscode.window.activeTextEditor?.document.fileName || a?.document.fileName || ''
     updateStatusBar(file)
-
-    if (file.endsWith('.yaml')) {
-      vscode.commands.executeCommand('testapi6.inspect')
-    }
+    inspectProvider?.load(file)
   }))
 
   updateStatusBar(lastScenario)
