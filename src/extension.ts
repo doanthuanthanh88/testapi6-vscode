@@ -14,6 +14,7 @@ let ter = new Map<string, vscode.Terminal>()
 const nodeBin = path.join(require.resolve('testapi6'), '..', '..', 'bin/index.js')
 let lastScenario: string
 let lastInspect: string
+let playStatusBar: vscode.StatusBarItem;
 
 async function setConfig() {
   // Setting yaml config
@@ -92,6 +93,38 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   })
 
+  // Status bar
+
+  playStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1);
+  playStatusBar.command = 'testapi6.run'
+  playStatusBar.text = '▶ TestAPI6'
+  playStatusBar.tooltip = 'Run testapi6'
+  context.subscriptions.push(playStatusBar);
+
+  function updateStatusBar(file: string) {
+    if (file && file.endsWith('.yaml')) {
+      playStatusBar.show()
+      playStatusBar.text = `▶ ${basename(file)}`
+      playStatusBar.tooltip = `testapi6: ${file}`
+    } else if (lastScenario) {
+      playStatusBar.text = `▶ ${basename(lastScenario)}`
+      playStatusBar.tooltip = `testapi6: ${lastScenario}`
+    } else {
+      playStatusBar.hide()
+    }
+  }
+
+  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
+    const file = vscode.window.activeTextEditor?.document.fileName || ''
+    updateStatusBar(file)
+
+    if (file.endsWith('.yaml')) {
+      vscode.commands.executeCommand('testapi6.inspect')
+    }
+  }))
+
+  updateStatusBar(lastScenario)
+
   const inspectProvider = new TestApi6InspectProvider()
   const provider = new TestApi6Provider()
 
@@ -155,9 +188,15 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.inspect', async (h: any) => {
     let scenarioPath = h instanceof TestApi6Item ? h.src : (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
-    const { scenarioFile = '' } = getFileRun(scenarioPath, lastInspect)
-    await inspectProvider.load(scenarioFile)
-    lastInspect = scenarioFile
+    if (scenarioPath) {
+      try {
+        const { scenarioFile = '' } = getFileRun(scenarioPath, lastInspect)
+        await inspectProvider.load(scenarioFile)
+        lastInspect = scenarioFile
+      } catch (err) {
+        vscode.window.showErrorMessage('Error: ' + err.message + ' ❌❌❌')
+      }
+    }
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.run', async (h: any) => {
@@ -210,6 +249,7 @@ export async function activate(context: vscode.ExtensionContext) {
       // 	writeFileSync(lastScenario, content.join('\n'))
       // }
       lastScenario = scenarioFile
+      updateStatusBar(lastScenario)
       terObj.sendText(`${nodeBin} ${scenarioFile} ${decryptPassword}`)
       if (isClose) {
         terObj.sendText(`exit`, false)

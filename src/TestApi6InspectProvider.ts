@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { load, InputYamlFile } from 'testapi6/dist/main'
+import { Method, Templates } from 'testapi6/dist/components';
 
 export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6InspectItem> {
   private list = [] as any[]
@@ -8,17 +9,25 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
 
   async load(f: string) {
     this.list = []
-    const root = await load(new InputYamlFile(f)) as any
-    await root.setup()
-    for (const tag of root.group.steps) {
-      const tagName = tag.tagName
-      if (tagName === 'Group') {
-        this.list.push(new TestApi6InspectItem(tagName, tag.title, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.Collapsed))
-      } else if (tag.title || tag.depends) {
-        this.list.push(new TestApi6InspectItem(tagName, tag.title, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.None))
+    try {
+      const root = await load(new InputYamlFile(f)) as any
+      await root.setup()
+      this.list.push(new TestApi6InspectItem('Templates', '--------------------', 'Templates', {}, vscode.TreeItemCollapsibleState.None))
+      Templates.Templates.forEach((tag: any, key) => {
+        this.list.push(new TestApi6InspectItem(key, key, tag['<--'].length > 0 ? `extends ${tag['<--'].join(', ')}` : '', tag, vscode.TreeItemCollapsibleState.None))
+      })
+      this.list.push(new TestApi6InspectItem('Test steps', '--------------------', 'Test steps', {}, vscode.TreeItemCollapsibleState.None))
+      for (const tag of root.group.steps) {
+        const tagName = tag.tagName
+        if (tagName === 'Group') {
+          this.list.push(new TestApi6InspectItem(tagName, tag.title, tag.description || tag.des || '' + (tag.loop ? ' (loop)' : ''), tag, vscode.TreeItemCollapsibleState.Collapsed))
+        } else if (tag.title || tag.depends) {
+          this.list.push(new TestApi6InspectItem(tagName, tag.title, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.None))
+        }
       }
+    } finally {
+      this.refresh()
     }
-    this.refresh()
   }
 
   getTreeItem(element: TestApi6InspectItem): vscode.TreeItem {
@@ -40,14 +49,16 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
       element.info.steps.filter((t: any) => t.title || t.depends).forEach((tag: any) => {
         const tagName = tag.tagName
         if (tagName === 'Group') {
-          list.push(new TestApi6InspectItem(tagName, tag.title, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.Collapsed))
-        }
-        if (tag.depends) {
+          list.push(new TestApi6InspectItem(tagName, `  ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.Collapsed))
+        } else if (['api', ...Object.keys(Method).map(e => e.toLowerCase())].includes(tagName.toLowerCase())) {
+          if (!tag.depends) {
+            list.push(new TestApi6InspectItem(tagName, `▶ ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
+          }
           tag.validate?.filter((e: any) => e?.title).forEach((tag: any) => {
-            list.push(new TestApi6InspectItem(tagName, `   ◦ ${tag.title}`, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.None))
+            list.push(new TestApi6InspectItem(tagName, `   ◦ ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
           })
         } else {
-          list.push(new TestApi6InspectItem(tagName, `▶ ${tag.title}`, tag.description || tag.des, tag, vscode.TreeItemCollapsibleState.None))
+          list.push(new TestApi6InspectItem(tagName, `- ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
         }
       })
     }
@@ -89,13 +100,13 @@ export class TestApi6InspectItem extends vscode.TreeItem {
     public collapsibleState: vscode.TreeItemCollapsibleState,
   ) {
     super('', collapsibleState);
-    if (this.info?.depends) {
-      this.label = '- ' + this.info.validate?.map((v: any) => v.title).filter((e: string) => e).join(' | ')
-      this.description = this.description
-    } else {
-      this.label = this.title
-      this.description = this.description
-    }
+    // if (this.info?.depends) {
+    //   this.label = '- ' + this.info.validate?.map((v: any) => v.title).filter((e: string) => e).join(' | ')
+    //   this.description = this.des
+    // } else {
+    this.label = this.title
+    this.description = this.des
+    // }
   }
 
   // iconPath = {

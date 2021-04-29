@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.17",
+	"version": "1.1.18",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -24,11 +24,13 @@
 	},
 	"contributes": {
 		"views": {
-			"explorer": [
+			"test": [
 				{
 					"id": "testApi6Inspect",
 					"name": "TestAPI6 Inspect"
-				},
+				}
+			],
+			"explorer": [
 				{
 					"id": "testApi6",
 					"name": "TestAPI6 Bookmark"
