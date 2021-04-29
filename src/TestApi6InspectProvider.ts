@@ -9,31 +9,36 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
   constructor() { }
 
   async load(f: string) {
-    this.list = []
+    const list = [] as any
     try {
       const root = await load(new InputYamlFile(f)) as any
       await root.setup()
-      this.list.push(new TestApi6InspectItem('Templates', '--------------------', 'Templates', {}, vscode.TreeItemCollapsibleState.None))
+      list.push(new TestApi6InspectItem('Templates', '--------------------', 'Templates', {}, vscode.TreeItemCollapsibleState.None))
       Templates.Templates.forEach((tag: any, key) => {
-        this.list.push(new TestApi6InspectItem(key, key, tag['<--'].length > 0 ? `extends ${tag['<--'].join(', ')}` : '', tag, vscode.TreeItemCollapsibleState.None))
+        list.push(new TestApi6InspectItem(key, key, tag['<--'].length > 0 ? `extends ${tag['<--'].join(', ')}` : '', tag, vscode.TreeItemCollapsibleState.None))
       })
-      this.list.push(new TestApi6InspectItem('Test steps', '--------------------', 'Test steps', {}, vscode.TreeItemCollapsibleState.None))
+      list.push(new TestApi6InspectItem('Test steps', '--------------------', 'Test steps', {}, vscode.TreeItemCollapsibleState.None))
       root.group.steps.filter((t: any) => t.title || t.depends).forEach((tag: any) => {
         const tagName = tag.tagName
         if (tagName === 'Group') {
-          this.list.push(new TestApi6InspectItem(tagName, `  ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.Collapsed))
+          list.push(new TestApi6InspectItem(tagName, `  ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.Collapsed))
         } else if (['api', ...Object.keys(Method).map(e => e.toLowerCase())].includes(tagName.toLowerCase())) {
           if (!tag.depends) {
-            this.list.push(new TestApi6InspectItem(tagName, `⥂ ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
+            list.push(new TestApi6InspectItem(tagName, `⥂ ${tag.title}`, (tag.docs ? '★ ' : '') + (tag.description || tag.des || tagName), tag, vscode.TreeItemCollapsibleState.None))
+            tag.validate?.filter((e: any) => e?.title).forEach((v: any) => {
+              list.push(new TestApi6InspectItem(tagName, `    ☑ ${v.title}`, v.description || v.des || 'Api.Validate', v, vscode.TreeItemCollapsibleState.None))
+            })
+          } else {
+            tag.validate?.filter((e: any) => e?.title).forEach((v: any, i: any) => {
+              list.push(new TestApi6InspectItem(tagName, `    ☑ ${v.title}`, (tag.docs ? '★ ' : '') + (v.description || v.des || (+i === 0 ? 'Api.Validate (depends)' : '')), v, vscode.TreeItemCollapsibleState.None))
+            })
           }
-          tag.validate?.filter((e: any) => e?.title).forEach((tag: any) => {
-            this.list.push(new TestApi6InspectItem(tagName, `    ☑ ${tag.title}`, tag.description || tag.des || 'Api.Validate', tag, vscode.TreeItemCollapsibleState.None))
-          })
         } else {
-          this.list.push(new TestApi6InspectItem(tagName, ` ·  ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
+          list.push(new TestApi6InspectItem(tagName, ` ·  ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
         }
       })
     } finally {
+      this.list = list
       this.refresh()
     }
   }
@@ -60,11 +65,15 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
           list.push(new TestApi6InspectItem(tagName, `  ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.Collapsed))
         } else if (['api', ...Object.keys(Method).map(e => e.toLowerCase())].includes(tagName.toLowerCase())) {
           if (!tag.depends) {
-            list.push(new TestApi6InspectItem(tagName, `⥂ ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
+            list.push(new TestApi6InspectItem(tagName, `⥂ ${tag.title}`, (tag.docs ? '★ ' : '') + (tag.description || tag.des || tagName), tag, vscode.TreeItemCollapsibleState.None))
+            tag.validate?.filter((e: any) => e?.title).forEach((v: any) => {
+              list.push(new TestApi6InspectItem(tagName, `    ☑ ${v.title}`, v.description || v.des || 'Api.Validate', v, vscode.TreeItemCollapsibleState.None))
+            })
+          } else {
+            tag.validate?.filter((e: any) => e?.title).forEach((v: any, i: any) => {
+              list.push(new TestApi6InspectItem(tagName, `    ☑ ${v.title}`, (tag.docs ? '★ ' : '') + (v.description || v.des || (+i === 0 ? 'Api.Validate (depends)' : '')), v, vscode.TreeItemCollapsibleState.None))
+            })
           }
-          tag.validate?.filter((e: any) => e?.title).forEach((tag: any) => {
-            list.push(new TestApi6InspectItem(tagName, `    ☑ ${tag.title}`, tag.description || tag.des || 'Api.Validate', tag, vscode.TreeItemCollapsibleState.None))
-          })
         } else {
           list.push(new TestApi6InspectItem(tagName, ` ·  ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
         }
