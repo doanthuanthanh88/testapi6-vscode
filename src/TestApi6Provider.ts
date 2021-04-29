@@ -102,6 +102,8 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
       }
     }
 
+    list.sort((a, b) => a.label.toLowerCase() < b.label.toLowerCase() ? -1 : a.label.toLowerCase() > b.label.toLowerCase() ? 1 : 0)
+
     return list
   }
 

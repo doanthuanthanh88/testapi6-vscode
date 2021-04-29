@@ -125,7 +125,7 @@ export async function activate(context: vscode.ExtensionContext) {
     const inp = vscode.window.createInputBox()
     inp.placeholder = h.label
     inp.show()
-    const label = await new Promise<string>(r => {
+    let label = await new Promise<string>(r => {
       let isAccepted: boolean
       inp.onDidAccept(() => {
         if (!isAccepted) {
@@ -139,7 +139,8 @@ export async function activate(context: vscode.ExtensionContext) {
         r(inp.value || '')
       })
     })
-    if (label) provider.upsert(label, scenarioPath)
+    if (!label) label = h.label
+    if (label) provider.upsert(label.trim(), scenarioPath)
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.runinview', async (h: any) => {
