@@ -249,8 +249,9 @@ export async function activate(context: vscode.ExtensionContext) {
       updateStatusBar(lastScenario)
       terObj.sendText(`${nodeBin} ${scenarioFile} ${decryptPassword}`)
       if (isClose) {
-        terObj.sendText(`exit`, false)
-        vscode.commands.executeCommand('workbench.action.terminal.focus')
+        setTimeout(() => {
+          terObj?.sendText(`exit`, true)
+        }, 1000)
       }
     } catch (err: any) {
       vscode.window.showErrorMessage('Error: ' + err.message + ' ❌❌❌')
