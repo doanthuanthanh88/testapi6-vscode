@@ -19,7 +19,8 @@ export class TestApi6ExampleProvider implements vscode.TreeDataProvider<TestApi6
       const tmp = await res.text()
       const [cnt] = loadAll(tmp) as any[]
       const examples = cnt.steps.map((e: any) => e && e['Import']).filter((e: string) => e)
-      const tree = examples.reduce((sum: any, e: string) => {
+      examples.sort()
+      let tree = examples.reduce((sum: any, e: string) => {
         const paths = e.split('/')
         let pt = sum
         paths.forEach((p, i) => {
@@ -33,6 +34,7 @@ export class TestApi6ExampleProvider implements vscode.TreeDataProvider<TestApi6
         })
         return sum
       }, {})
+      tree = tree['examples']
       Object.keys(tree).forEach(k => {
         if (k !== '$files') {
           list.push(new TestApi6ExampleItem('folder', k, k, tree[k], vscode.TreeItemCollapsibleState.Collapsed))
@@ -97,7 +99,7 @@ export class TestApi6ExampleItem extends vscode.TreeItem {
     public collapsibleState: vscode.TreeItemCollapsibleState,
   ) {
     super('', collapsibleState);
-    this.label = this.title
+    this.label = (tag === 'file' ? 'ⓘ ' : '') + this.title
     this.description = this.des
     this.tooltip = this.des
     this.contextValue = tag

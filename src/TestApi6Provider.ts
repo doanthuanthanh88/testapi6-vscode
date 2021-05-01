@@ -4,14 +4,15 @@ import { load } from 'js-yaml'
 import { homedir } from 'os'
 import { existsSync, writeFileSync, readFileSync } from 'fs';
 import { SCHEMA } from 'testapi6/dist/components/index'
+import { TreeItemLabel } from 'vscode';
 
 export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
   private list = [] as any[]
 
   get _list() {
-    return this.list.filter(e => e && e.label).map(e => {
+    return this.list.filter(e => e && e.context !== 'divider').map(e => {
       const rs = {
-        label: e.label.replaceAll('★ ', ''),
+        label: e._label.replaceAll('★ ', ''),
         src: e.src
       }
       return rs
@@ -55,7 +56,7 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
   upsert(label: string, src: string) {
     let item = this.list.find(e => e.src === src)
     if (item) {
-      item.label = label
+      item._label = label
     } else {
       item = new TestApi6Item('folder', label, src, vscode.TreeItemCollapsibleState.Collapsed)
       this.list.push(item)
@@ -68,6 +69,7 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
   readonly onDidChangeTreeData: vscode.Event<TestApi6Item | undefined | null | void> = this._onDidChangeTreeData.event;
 
   refresh(): void {
+    this.list = this.list.filter(e => e.context !== 'divider')
     this._onDidChangeTreeData.fire();
   }
 
@@ -96,30 +98,31 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
       }
     }
 
-    list.sort((a, b) => a.label.toLowerCase() < b.label.toLowerCase() ? -1 : a.label.toLowerCase() > b.label.toLowerCase() ? 1 : 0)
-
-    for (const l of list) {
-      const c = await this.getChildren(l) as any
-      if (c.length === 0) {
-        l.collapsibleState = vscode.TreeItemCollapsibleState.None
-        l.label = '★ ' + l.label
-        l.context = 'file'
-      } else {
-        l.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed
-        l.label = '★ ' + l.label
-        l.context = 'folder'
-      }
-    }
+    list.sort((a, b) => a._label.toLowerCase() < b._label.toLowerCase() ? -1 : a._label.toLowerCase() > b._label.toLowerCase() ? 1 : 0)
 
     let tmp = undefined
     for (let i = list.length - 1; i >= 0; i--) {
       const a = list[i]
-      const dir = a.label.substr(0, a.label.lastIndexOf('/'))
+      const dir = a._label.substr(0, a._label.lastIndexOf('/'))
       if (tmp === undefined) {
         tmp = dir
       } else if (tmp !== dir) {
-        this.list.splice(i + 1, 0, new TestApi6Item('divider', '', '', vscode.TreeItemCollapsibleState.None))
+        list.splice(i + 1, 0, new TestApi6Item('divider', '★ ' + tmp, '', vscode.TreeItemCollapsibleState.None))
         tmp = dir
+      }
+    }
+    if (tmp !== undefined) {
+      list.splice(0, 0, new TestApi6Item('divider', '★ ' + tmp, '---------------------', vscode.TreeItemCollapsibleState.None))
+    }
+
+    for (const l of list.filter(l => l.context !== 'divider')) {
+      const c = await this.getChildren(l) as any
+      if (c.length === 0) {
+        l.collapsibleState = vscode.TreeItemCollapsibleState.None
+        l.context = 'file'
+      } else {
+        l.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed
+        l.context = 'folder'
       }
     }
 
@@ -131,7 +134,7 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
 export class TestApi6Item extends vscode.TreeItem {
   constructor(
     public context: 'folder' | 'file' | 'divider',
-    public label: string,
+    public _label: string,
     public readonly src: string,
     public collapsibleState: vscode.TreeItemCollapsibleState,
   ) {
@@ -139,7 +142,17 @@ export class TestApi6Item extends vscode.TreeItem {
     this.contextValue = context
     this.tooltip = this.src || ''
     const start = this.src.length - 27
-    this.description = this.tooltip ? ('...' + this.tooltip.substr(start > 0 ? start : 0)) : ''
+    this.description = this.context !== 'divider' ? ('...' + this.tooltip.substr(start > 0 ? start : 0)) : ''
+  }
+
+  // @ts-ignore
+  set label(_: any) { }
+
+  // @ts-ignore
+  get label() {
+    const dir = this._label.substr(0, this._label.lastIndexOf('/'))
+    const a = (this.context === 'file' ? '├ ' : this.context === 'folder' ? '├ ' : '') + this._label
+    return dir.length > 0 ? a.replace(dir + '/', '') : a
   }
 
   // iconPath = {

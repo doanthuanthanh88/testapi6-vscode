@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.22",
+	"version": "1.1.23",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -29,7 +29,7 @@
 			"test": [
 				{
 					"id": "testApi6ScenarioInspect",
-					"name": "TestAPI6 Scenarios"
+					"name": "TestAPI6 Scenario"
 				},
 				{
 					"id": "testApi6TemplatesInspect",
@@ -37,7 +37,11 @@
 				},
 				{
 					"id": "testApi6VarsInspect",
-					"name": "TestAPI6 Global variables"
+					"name": "TestAPI6 Global env variables"
+				},
+				{
+					"id": "testApi6DocsInspect",
+					"name": "TestAPI6 Document"
 				},
 				{
 					"id": "testApi6ExampleProvider",
@@ -189,11 +193,11 @@
 		}
 	},
 	"scripts": {
-		"pub": "yarn clean && yarn vscode:prepublish && yarn package && yarn pub:to",
+		"all": "yarn clean && yarn vscode:prepublish && yarn package && yarn pub",
 		"build": "yarn clean && yarn vscode:prepublish && yarn package",
 		"commit": "git add . && git commit -m 'update libs' && git push",
 		"clean": "rm -rf ./yarn.lock && yarn install && yarn upgrade testapi6",
-		"pub:to": "vsce publish",
+		"pub": "vsce publish",
 		"package": "vsce package",
 		"vscode:prepublish": "yarn run compile",
 		"compile": "tsc -p ./",

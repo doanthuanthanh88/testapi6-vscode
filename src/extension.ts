@@ -9,6 +9,7 @@ import { basename } from 'path';
 import { TestApi6InspectProvider } from './TestApi6InspectProvider';
 import { load, InputYamlFile } from 'testapi6/dist/main'
 import { TestApi6ExampleProvider } from './TestApi6ExampleProvider';
+import { cloneDeep } from 'lodash';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -87,6 +88,12 @@ export async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "testapi6" is now active!');
 
   let isSetConfig: boolean
+  const scenarioInspectProvider = new TestApi6InspectProvider()
+  const templateInspectProvider = new TestApi6InspectProvider()
+  const varsInspectProvider = new TestApi6InspectProvider()
+  const docsInspectProvider = new TestApi6InspectProvider()
+  const exampleProvider = new TestApi6ExampleProvider()
+  const provider = new TestApi6Provider()
 
   vscode.window.onDidCloseTerminal(e => {
     if (e.name.startsWith('testapi6:')) {
@@ -115,28 +122,39 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   }
 
+  async function yamlChange(file: string) {
+    try {
+      const { scenarioFile = file } = getFileRun(file, file)
+      const root = await load(new InputYamlFile(scenarioFile)) as any
+      await root.setup()
+      await scenarioInspectProvider.load(cloneDeep(root), 'scenario')
+      await docsInspectProvider.load(cloneDeep(root), 'docs')
+      await templateInspectProvider.load(cloneDeep(root), 'templates')
+      await varsInspectProvider.load(cloneDeep(root), 'vars')
+      await exampleProvider.load()
+      return scenarioFile
+    } catch (err) {
+      vscode.window.showErrorMessage('Error: ' + err.message + ' ❌❌❌')
+    }
+    return null
+  }
+
+  context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(async (a) => {
+    let file = a?.fileName || ''
+    await yamlChange(file)
+  }))
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(async (a) => {
-    const scenarioFile = vscode.window.activeTextEditor?.document.fileName || a?.document.fileName || ''
-    updateStatusBar(scenarioFile)
-    const root = await load(new InputYamlFile(scenarioFile)) as any
-    await root.setup()
-    await scenarioInspectProvider.load(root, 'scenario')
-    await templateInspectProvider.load(root, 'templates')
-    await varsInspectProvider.load(root, 'vars')
-    await exampleProvider.load()
+    let file = vscode.window.activeTextEditor?.document.fileName || a?.document.fileName || ''
+    const outFile = await yamlChange(file)
+    if (outFile) updateStatusBar(outFile)
   }))
 
   updateStatusBar(lastScenario)
 
-  const scenarioInspectProvider = new TestApi6InspectProvider()
-  const templateInspectProvider = new TestApi6InspectProvider()
-  const varsInspectProvider = new TestApi6InspectProvider()
-  const exampleProvider = new TestApi6ExampleProvider()
-  const provider = new TestApi6Provider()
-
   vscode.window.registerTreeDataProvider('testApi6ScenarioInspect', scenarioInspectProvider);
   vscode.window.registerTreeDataProvider('testApi6TemplatesInspect', templateInspectProvider);
   vscode.window.registerTreeDataProvider('testApi6VarsInspect', varsInspectProvider);
+  vscode.window.registerTreeDataProvider('testApi6DocsInspect', docsInspectProvider);
   vscode.window.registerTreeDataProvider('testApi6ExampleProvider', exampleProvider);
   vscode.window.registerTreeDataProvider('testApi6', provider);
 
@@ -170,7 +188,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.edit', async (h: any) => {
     let scenarioPath = h.src
     const inp = vscode.window.createInputBox()
-    inp.value = h.label
+    inp.value = h._label
     inp.show()
     let label = await new Promise<string>(r => {
       let isAccepted: boolean
@@ -186,7 +204,6 @@ export async function activate(context: vscode.ExtensionContext) {
         r(inp.value || '')
       })
     })
-    if (!label) label = h.label
     if (label) provider.upsert(label.trim(), scenarioPath)
   }))
 
@@ -207,9 +224,10 @@ export async function activate(context: vscode.ExtensionContext) {
         const { scenarioFile = '' } = getFileRun(scenarioPath, lastInspect)
         const root = await load(new InputYamlFile(scenarioFile)) as any
         await root.setup()
-        await scenarioInspectProvider.load(root, 'scenario')
-        await templateInspectProvider.load(root, 'templates')
-        await varsInspectProvider.load(root, 'vars')
+        await scenarioInspectProvider.load(cloneDeep(root), 'scenario')
+        await docsInspectProvider.load(cloneDeep(root), 'docs')
+        await templateInspectProvider.load(cloneDeep(root), 'templates')
+        await varsInspectProvider.load(cloneDeep(root), 'vars')
         lastInspect = scenarioFile
       } catch (err) {
         vscode.window.showErrorMessage('Error: ' + err.message + ' ❌❌❌')
