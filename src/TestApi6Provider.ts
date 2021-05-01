@@ -9,13 +9,13 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
   private list = [] as any[]
 
   get _list() {
-    return this.list.map(e => {
-      return {
-        label: e.label,
-        src: e.src,
-        collapsibleState: e.collapsibleState
+    return this.list.filter(e => e && e.label).map(e => {
+      const rs = {
+        label: e.label.replaceAll('★ ', ''),
+        src: e.src
       }
-    })
+      return rs
+    }).filter(e => e.label)
   }
 
   constructor(public dataFile = path.join(homedir(), '.testapi6.data')) {
@@ -27,7 +27,7 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
       this.save()
     } else {
       const content = readFileSync(this.dataFile).toString()
-      this.list = (JSON.parse(content) as any[]).map(e => new TestApiRootItem(e.label, e.src, e.collapsibleState, 0))
+      this.list = (JSON.parse(content) as any[]).map(e => new TestApi6Item('folder', e.label, e.src, vscode.TreeItemCollapsibleState.Collapsed))
     }
   }
 
@@ -43,7 +43,7 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
     return this.list.find(e => e.src === src)
   }
 
-  remove(item: TestApiRootItem) {
+  remove(item: TestApi6Item) {
     const i = this.list.findIndex(e => e.src === item.src)
     if (i !== -1) {
       this.list.splice(i, 1)
@@ -57,7 +57,7 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
     if (item) {
       item.label = label
     } else {
-      item = new TestApiRootItem(label, src, vscode.TreeItemCollapsibleState.Collapsed, 0)
+      item = new TestApi6Item('folder', label, src, vscode.TreeItemCollapsibleState.Collapsed)
       this.list.push(item)
     }
     this.refresh()
@@ -72,9 +72,10 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
   }
 
   async getChildren(element?: TestApi6Item) {
-    let list = []
-    if (!element) list = this.list
-    else {
+    let list = [] as TestApi6Item[]
+    if (!element) {
+      list = this.list
+    } else {
       try {
         const root = load(readFileSync(element.src).toString(), { schema: SCHEMA }) as any
         let items = [] as any[]
@@ -88,50 +89,61 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
         })
         list = importItems.map(tag => {
           const file = tag[Object.keys(tag)[0]]
-          return new TestApiChildItem(file, path.join(path.dirname(element.src), file), vscode.TreeItemCollapsibleState.Collapsed, element.level + 1)
+          return new TestApi6Item('folder', file, path.join(path.dirname(element.src), file), vscode.TreeItemCollapsibleState.Collapsed)
         })
       } catch (err) {
-        return [new TestApiChildItem('❌ Could not load this file', err.message, vscode.TreeItemCollapsibleState.None, -1)]
+        return [new TestApi6Item('file', '❌ Could not load this file', err.message, vscode.TreeItemCollapsibleState.None)]
       }
     }
+
+    list.sort((a, b) => a.label.toLowerCase() < b.label.toLowerCase() ? -1 : a.label.toLowerCase() > b.label.toLowerCase() ? 1 : 0)
 
     for (const l of list) {
       const c = await this.getChildren(l) as any
       if (c.length === 0) {
         l.collapsibleState = vscode.TreeItemCollapsibleState.None
+        l.label = '★ ' + l.label
+        l.context = 'file'
+      } else {
+        l.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed
+        l.label = '★ ' + l.label
+        l.context = 'folder'
       }
     }
 
-    list.sort((a, b) => a.label.toLowerCase() < b.label.toLowerCase() ? -1 : a.label.toLowerCase() > b.label.toLowerCase() ? 1 : 0)
+    let tmp = undefined
+    for (let i = list.length - 1; i >= 0; i--) {
+      const a = list[i]
+      const dir = a.label.substr(0, a.label.lastIndexOf('/'))
+      if (tmp === undefined) {
+        tmp = dir
+      } else if (tmp !== dir) {
+        this.list.splice(i + 1, 0, new TestApi6Item('divider', '', '', vscode.TreeItemCollapsibleState.None))
+        tmp = dir
+      }
+    }
 
     return list
   }
 
 }
 
-export abstract class TestApi6Item extends vscode.TreeItem {
+export class TestApi6Item extends vscode.TreeItem {
   constructor(
-    public readonly label: string,
+    public context: 'folder' | 'file' | 'divider',
+    public label: string,
     public readonly src: string,
     public collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly level: number,
   ) {
-    super(label, collapsibleState);
-    this.tooltip = this.src
+    super('', collapsibleState);
+    this.contextValue = context
+    this.tooltip = this.src || ''
     const start = this.src.length - 27
-    this.description = '...' + this.src.substr(start > 0 ? start : 0);
+    this.description = this.tooltip ? ('...' + this.tooltip.substr(start > 0 ? start : 0)) : ''
   }
 
   // iconPath = {
   //   light: path.join(__filename, '..', '..', 'resources', 'light', 'TestApi6Item.svg'),
   //   dark: path.join(__filename, '..', '..', 'resources', 'dark', 'TestApi6Item.svg')
   // };
-}
-
-export class TestApiRootItem extends TestApi6Item {
-  level = 0
-}
-
-export class TestApiChildItem extends TestApi6Item {
-  level = 1
 }

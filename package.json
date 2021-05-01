@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.21",
+	"version": "1.1.22",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -12,7 +12,9 @@
 	],
 	"activationEvents": [
 		"onView:testApi6",
-		"onView:testApi6Inspect",
+		"onView:testApi6ScenarioInspect",
+		"onView:testApi6TemplatesInspect",
+		"onView:testApi6VarsInspect",
 		"onCommand:testapi6.run",
 		"onCommand:testapi6.add"
 	],
@@ -26,8 +28,20 @@
 		"views": {
 			"test": [
 				{
-					"id": "testApi6Inspect",
-					"name": "TestAPI6 Inspect"
+					"id": "testApi6ScenarioInspect",
+					"name": "TestAPI6 Scenarios"
+				},
+				{
+					"id": "testApi6TemplatesInspect",
+					"name": "TestAPI6 Global templates"
+				},
+				{
+					"id": "testApi6VarsInspect",
+					"name": "TestAPI6 Global variables"
+				},
+				{
+					"id": "testApi6ExampleProvider",
+					"name": "TestAPI6 Examples"
 				}
 			],
 			"explorer": [
@@ -85,6 +99,10 @@
 			{
 				"command": "testapi6.open",
 				"title": "Open"
+			},
+			{
+				"command": "testapi6.openExample",
+				"title": "Example"
 			},
 			{
 				"command": "testapi6.refresh",
@@ -146,20 +164,25 @@
 			"view/item/context": [
 				{
 					"command": "testapi6.del",
-					"when": "view == testApi6"
+					"when": "view == testApi6 && viewItem != divider"
 				},
 				{
 					"command": "testapi6.edit",
-					"when": "view == testApi6"
+					"when": "view == testApi6 && viewItem != divider"
 				},
 				{
 					"command": "testapi6.open",
-					"when": "view == testApi6",
+					"when": "view == testApi6 && viewItem != divider",
+					"group": "inline"
+				},
+				{
+					"command": "testapi6.openExample",
+					"when": "view == testApi6ExampleProvider && viewItem == file",
 					"group": "inline"
 				},
 				{
 					"command": "testapi6.runinview",
-					"when": "view == testApi6",
+					"when": "view == testApi6 && viewItem != divider",
 					"group": "inline"
 				}
 			]
