@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.23",
+	"version": "1.1.24",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -69,14 +69,6 @@
 			{
 				"command": "testapi6.run",
 				"key": "alt+cmd+t"
-			},
-			{
-				"command": "testapi6.inspect",
-				"key": "ctrl+shift+i"
-			},
-			{
-				"command": "testapi6.inspect",
-				"key": "alt+cmd+i"
 			}
 		],
 		"commands": [
@@ -94,11 +86,6 @@
 				"command": "testapi6.add",
 				"category": "testapi6",
 				"title": "Bookmark"
-			},
-			{
-				"command": "testapi6.inspect",
-				"category": "testapi6",
-				"title": "Inspect"
 			},
 			{
 				"command": "testapi6.open",
@@ -141,11 +128,6 @@
 					"when": "resourceLangId == yaml",
 					"command": "testapi6.add",
 					"group": "testapi6"
-				},
-				{
-					"when": "resourceLangId == yaml",
-					"command": "testapi6.inspect",
-					"group": "testapi6"
 				}
 			],
 			"explorer/context": [
@@ -159,10 +141,6 @@
 				{
 					"command": "testapi6.refresh",
 					"when": "view == testApi6"
-				},
-				{
-					"command": "testapi6.inspect",
-					"when": "view == testApi6Inspect"
 				}
 			],
 			"view/item/context": [

@@ -16,31 +16,46 @@ import { cloneDeep } from 'lodash';
 let ter = new Map<string, vscode.Terminal>()
 const nodeBin = path.join(require.resolve('testapi6'), '..', '..', 'bin/index.js')
 let lastScenario: string
-let lastInspect: string
 let playStatusBar: vscode.StatusBarItem;
+let debugLog: vscode.OutputChannel
 
 async function setConfig() {
-  // Setting yaml config
-  const res = await fetch('https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/.vscode/settings.json', {
-    method: 'GET'
-  })
-  const tmp = await res.text()
-  let yamlConfig = {} as any
   try {
-    eval(`yamlConfig = ${tmp || '{}'}`)
+    // Setting yaml config
+    const res = await fetch('https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/.vscode/settings.json', {
+      method: 'GET'
+    })
+    const tmp = await res.text()
+    let yamlConfig = {} as any
+    try {
+      eval(`yamlConfig = ${tmp || '{}'}`)
+    } catch (err) {
+      vscode.window.showErrorMessage(err.message)
+      debugLog.appendLine('')
+      debugLog.appendLine(err.message)
+      debugLog.appendLine(err.stack)
+      debugLog.show(true)
+    }
+    try {
+      const conf = vscode.workspace.getConfiguration()
+      await conf.update('yaml.customTags', yamlConfig['yaml.customTags'], vscode.ConfigurationTarget.Workspace)
+      await conf.update('yaml.schemas', {
+        "https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/schema.json": "*.yaml"
+      }, vscode.ConfigurationTarget.Workspace)
+    } catch (err) {
+      vscode.window.showWarningMessage('Please install YAML Language support first')
+      debugLog.appendLine('')
+      debugLog.appendLine(err.message)
+      debugLog.appendLine(err.stack)
+      debugLog.show(true)
+      // throw err
+    }
   } catch (err) {
     vscode.window.showErrorMessage(err.message)
-    throw err
-  }
-  try {
-    const conf = vscode.workspace.getConfiguration()
-    await conf.update('yaml.customTags', yamlConfig['yaml.customTags'], vscode.ConfigurationTarget.Workspace)
-    await conf.update('yaml.schemas', {
-      "https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/schema.json": "*.yaml"
-    }, vscode.ConfigurationTarget.Workspace)
-  } catch (err) {
-    vscode.window.showWarningMessage('Please install YAML Language support first')
-    // throw err
+    debugLog.appendLine('')
+    debugLog.appendLine(err.message)
+    debugLog.appendLine(err.stack)
+    debugLog.show(true)
   }
 }
 
@@ -88,6 +103,8 @@ export async function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "testapi6" is now active!');
 
   let isSetConfig: boolean
+  debugLog = vscode.window.createOutputChannel('TestAPI6')
+  debugLog.show(false)
   const scenarioInspectProvider = new TestApi6InspectProvider()
   const templateInspectProvider = new TestApi6InspectProvider()
   const varsInspectProvider = new TestApi6InspectProvider()
@@ -96,7 +113,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const provider = new TestApi6Provider()
 
   vscode.window.onDidCloseTerminal(e => {
-    if (e.name.startsWith('testapi6:')) {
+    if (e.name.startsWith('TestAPI6:')) {
       ter.delete(e.name)
     }
   })
@@ -113,16 +130,17 @@ export async function activate(context: vscode.ExtensionContext) {
     if (file && file.endsWith('.yaml')) {
       playStatusBar.show()
       playStatusBar.text = `▶ ${basename(file)}`
-      playStatusBar.tooltip = `testapi6: ${file}`
+      playStatusBar.tooltip = `TestAPI6: ${file}`
     } else if (lastScenario) {
       playStatusBar.text = `▶ ${basename(lastScenario)}`
-      playStatusBar.tooltip = `testapi6: ${lastScenario}`
+      playStatusBar.tooltip = `TestAPI6: ${lastScenario}`
     } else {
       playStatusBar.hide()
     }
   }
 
   async function yamlChange(file: string) {
+    if (!file.endsWith('.yaml')) return null
     try {
       const { scenarioFile = file } = getFileRun(file, file)
       const root = await load(new InputYamlFile(scenarioFile)) as any
@@ -134,7 +152,10 @@ export async function activate(context: vscode.ExtensionContext) {
       await exampleProvider.load()
       return scenarioFile
     } catch (err) {
-      vscode.window.showErrorMessage('Error: ' + err.message + ' ❌❌❌')
+      debugLog.appendLine('')
+      debugLog.appendLine(err.message)
+      debugLog.appendLine(err.stack)
+      debugLog.show(true)
     }
     return null
   }
@@ -217,29 +238,10 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.executeCommand('testapi6.edit', new TestApi6Item('folder', basename(scenarioPath), scenarioPath, vscode.TreeItemCollapsibleState.Collapsed))
   }))
 
-  context.subscriptions.push(vscode.commands.registerCommand('testapi6.inspect', async (h: any) => {
-    let scenarioPath = h instanceof TestApi6Item ? h.src : (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
-    if (scenarioPath) {
-      try {
-        const { scenarioFile = '' } = getFileRun(scenarioPath, lastInspect)
-        const root = await load(new InputYamlFile(scenarioFile)) as any
-        await root.setup()
-        await scenarioInspectProvider.load(cloneDeep(root), 'scenario')
-        await docsInspectProvider.load(cloneDeep(root), 'docs')
-        await templateInspectProvider.load(cloneDeep(root), 'templates')
-        await varsInspectProvider.load(cloneDeep(root), 'vars')
-        lastInspect = scenarioFile
-      } catch (err) {
-        vscode.window.showErrorMessage('Error: ' + err.message + ' ❌❌❌')
-      }
-    }
-  }))
-
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.run', async (h: any) => {
-    try {
-      if (!isSetConfig) await setConfig()
-      isSetConfig = true
-    } catch { }
+    debugLog.clear()
+    if (!isSetConfig) await setConfig()
+    isSetConfig = true
     try {
       // const content = []
       // if (vscode.window.activeTextEditor) {
@@ -273,7 +275,7 @@ export async function activate(context: vscode.ExtensionContext) {
         })
       }
       const name = path.basename(scenarioFile)
-      const terName = 'testapi6:' + name
+      const terName = 'TestAPI6:' + name
       let terObj = ter.get(terName)
       if (!terObj) {
         terObj = vscode.window.createTerminal(terName)
@@ -294,7 +296,10 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     } catch (err: any) {
       vscode.window.showErrorMessage('Error: ' + err.message + ' ❌❌❌')
-      console.error(err)
+      debugLog.appendLine('')
+      debugLog.appendLine(err.message)
+      debugLog.appendLine(err.stack)
+      debugLog.show(true)
     }
   }))
 
