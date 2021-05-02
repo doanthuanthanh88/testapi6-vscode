@@ -28,6 +28,7 @@ async function setConfig() {
     const tmp = await res.text()
     let yamlConfig = {} as any
     try {
+      // eslint-disable-next-line
       eval(`yamlConfig = ${tmp || '{}'}`)
     } catch (err) {
       vscode.window.showErrorMessage(err.message)
