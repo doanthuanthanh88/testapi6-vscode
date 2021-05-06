@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
-import 'testapi6/dist/init'
 import { Method, Templates } from 'testapi6/dist/components';
-import { context } from 'testapi6/dist/Context'
+import { context } from 'testapi6/dist/Context';
+import 'testapi6/dist/init';
+import * as vscode from 'vscode';
 
 export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6InspectItem> {
   private list = [] as any[]
@@ -14,34 +14,34 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
       if (type === 'templates') {
         Templates.Templates.forEach((tag: any, key) => {
           tag.$type = type
-          list.push(new TestApi6InspectItem(key, `${key}`, `${tag.tagName}` + (tag['<--'].length > 0 ? `<${tag['<--'].join(' & ')}>` : ''), tag, vscode.TreeItemCollapsibleState.None))
+          list.push(new TestApi6InspectItem(key, `${key}`, `${tag.tagName}` + (tag['<--'].length > 0 ? `<${tag['<--'].join(' & ')}>` : ''), tag, true, vscode.TreeItemCollapsibleState.None))
         })
       } else if (type === 'scenario') {
         root.group.steps.filter((t: any) => t.title || t.depends).forEach((tag: any) => {
           tag.$type = type
           const tagName = tag.tagName
           if (tagName === 'Group') {
-            list.push(new TestApi6InspectItem(tagName, `├ ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.Collapsed))
+            list.push(new TestApi6InspectItem(tagName, `↳ ${tag.title}`, tag.description || tag.des || tagName, tag, true, vscode.TreeItemCollapsibleState.Collapsed))
           } else if (['api', ...Object.keys(Method).map(e => e.toLowerCase())].includes(tagName.toLowerCase())) {
             if (!tag.depends) {
-              list.push(new TestApi6InspectItem(tagName, `${tag.title}`, (tag.docs ? '★ ' : '') + (tag.description || tag.des || tagName), tag, vscode.TreeItemCollapsibleState.None))
+              list.push(new TestApi6InspectItem(tagName, `${tag.title}`, (tag.docs ? '★ ' : '') + (tag.description || tag.des || tagName), tag, true, vscode.TreeItemCollapsibleState.None))
               tag.validate?.filter((e: any) => e?.title).forEach((v: any) => {
                 v.tagName = 'Validate'
-                list.push(new TestApi6InspectItem(tagName, `${v.title}`, v.description || v.des || 'Api.Validate', v, vscode.TreeItemCollapsibleState.None))
+                list.push(new TestApi6InspectItem(tagName, `${v.title}`, v.description || v.des || 'Api.Validate', v, true, vscode.TreeItemCollapsibleState.None))
               })
             } else {
               tag.validate?.filter((e: any) => e?.title).forEach((v: any, i: any) => {
                 v.tagName = 'Validate'
-                list.push(new TestApi6InspectItem(tagName, `${v.title}`, (tag.docs ? '★ ' : '') + (v.description || v.des || (+i === 0 ? 'Api.Validate (depends)' : '')), v, vscode.TreeItemCollapsibleState.None))
+                list.push(new TestApi6InspectItem(tagName, `${v.title}`, (tag.docs ? '★ ' : '') + (v.description || v.des || (+i === 0 ? 'Api.Validate (depends)' : '')), v, true, vscode.TreeItemCollapsibleState.None))
               })
             }
           } else {
-            list.push(new TestApi6InspectItem(tagName, `${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
+            list.push(new TestApi6InspectItem(tagName, `${tag.title}`, tag.description || tag.des || tagName, tag, true, vscode.TreeItemCollapsibleState.None))
           }
         })
       } else if (type === 'vars') {
         Object.keys(context.Vars).forEach(k => {
-          list.push(new TestApi6InspectItem(k, `ⓔ ${k}`, typeof context.Vars[k] === 'object' ? JSON.stringify(context.Vars[k]) : `${context.Vars[k]}`, { tagName: '$globalVar', $type: type }, vscode.TreeItemCollapsibleState.None))
+          list.push(new TestApi6InspectItem(k, `▫ ${k}`, typeof context.Vars[k] === 'object' ? JSON.stringify(context.Vars[k]) : `${context.Vars[k]}`, { tagName: '$globalVar', $type: type }, true, vscode.TreeItemCollapsibleState.None))
         })
       } else if (type === 'docs') {
         let i = 1
@@ -52,7 +52,7 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
             if (tag.tagName === 'Group') {
               scanDoc(tag)
             } else {
-              list.push(new TestApi6InspectItem(tagName, `${i++}. ${tag.title}`, tagName + `<${(tag.docs?.tags || tag.docs?.swagger || tag.docs?.md || []).join('|')}>`, tag, vscode.TreeItemCollapsibleState.None))
+              list.push(new TestApi6InspectItem(tagName, `${i++}. ${tag.title}`, tagName + `<${(tag.docs?.tags || tag.docs?.swagger || tag.docs?.md || []).join('|')}>`, tag, true, vscode.TreeItemCollapsibleState.None))
             }
           })
         }
@@ -84,28 +84,28 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
         tag.$type = element.info.$type
         const tagName = tag.tagName
         if (tagName === 'Group') {
-          list.push(new TestApi6InspectItem(tagName, ` ├ ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.Collapsed))
+          list.push(new TestApi6InspectItem(tagName, ` ↳ ${tag.title}`, tag.description || tag.des || tagName, tag, false, vscode.TreeItemCollapsibleState.Collapsed))
         } else if (['api', ...Object.keys(Method).map(e => e.toLowerCase())].includes(tagName.toLowerCase())) {
           if (!tag.depends) {
-            list.push(new TestApi6InspectItem(tagName, `${tag.title}`, (tag.docs ? '★ ' : '') + (tag.description || tag.des || tagName), tag, vscode.TreeItemCollapsibleState.None))
+            list.push(new TestApi6InspectItem(tagName, `${tag.title}`, (tag.docs ? '★ ' : '') + (tag.description || tag.des || tagName), tag, false, vscode.TreeItemCollapsibleState.None))
             tag.validate?.filter((e: any) => e?.title).forEach((v: any) => {
               v.tagName = 'Validate'
-              list.push(new TestApi6InspectItem(tagName, `${v.title}`, v.description || v.des || 'Api.Validate', v, vscode.TreeItemCollapsibleState.None))
+              list.push(new TestApi6InspectItem(tagName, `${v.title}`, v.description || v.des || 'Api.Validate', v, false, vscode.TreeItemCollapsibleState.None))
             })
           } else {
             tag.validate?.filter((e: any) => e?.title).forEach((v: any, i: any) => {
               v.tagName = 'Validate'
-              list.push(new TestApi6InspectItem(tagName, `${v.title}`, (tag.docs ? '★ ' : '') + (v.description || v.des || (+i === 0 ? 'Api.Validate (depends)' : '')), v, vscode.TreeItemCollapsibleState.None))
+              list.push(new TestApi6InspectItem(tagName, `${v.title}`, (tag.docs ? '★ ' : '') + (v.description || v.des || (+i === 0 ? 'Api.Validate (depends)' : '')), v, false, vscode.TreeItemCollapsibleState.None))
             })
           }
         } else {
-          list.push(new TestApi6InspectItem(tagName, `${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
+          list.push(new TestApi6InspectItem(tagName, `${tag.title}`, tag.description || tag.des || tagName, tag, false, vscode.TreeItemCollapsibleState.None))
         }
       })
     } else if (element.title) {
       const tag = element.info
       const tagName = tag.tagName
-      list.push(new TestApi6InspectItem(tagName, `- ${tag.title}`, tag.description || tag.des || tagName, tag, vscode.TreeItemCollapsibleState.None))
+      list.push(new TestApi6InspectItem(tagName, `- ${tag.title}`, tag.description || tag.des || tagName, tag, false, vscode.TreeItemCollapsibleState.None))
     }
     // else if (element.tag === 'Import') {
     //   const root = await load(new InputYamlFile(element.info['src'])) as any
@@ -142,6 +142,7 @@ export class TestApi6InspectItem extends vscode.TreeItem {
     public readonly title: string,
     readonly des: string,
     public readonly info: any,
+    public readonly isRoot: boolean,
     public collapsibleState: vscode.TreeItemCollapsibleState,
   ) {
     super('', collapsibleState);
@@ -164,19 +165,21 @@ export class TestApi6InspectItem extends vscode.TreeItem {
   // @ts-ignore
   get label() {
     let icon = this.info.disabled ? '❌' : ''
+    let space = ''
+    if (!this.isRoot) space = '   '
     if (this.info.tagName !== '$globalVar') {
       if (['api', ...Object.keys(Method).map(e => e.toLowerCase())].includes(this.info.tagName.toLowerCase())) {
-        if(!icon) icon = this.info.$type !== 'docs' ? '⥂' : ''
-        return `   ${icon} ` + this.getDisabledText(this.info.disabled, this.title)
+        if (!icon) icon = this.info.$type !== 'docs' ? '↳' : ''
+        return `${space}${icon} ` + this.getDisabledText(this.info.disabled, this.title)
       } else if ('Validate' === this.info.tagName) {
-        if(!icon) icon = '☑'
-        return `       ${icon} ` + this.getDisabledText(this.info.disabled, this.title)
+        if (!icon) icon = ' ▫'
+        return `${space}    ${icon} ` + this.getDisabledText(this.info.disabled, this.title)
       } else if ('Group' === this.info.tagName) {
-        if(!icon) icon = this.info.$type === 'templates' ? 'ⓖ ' : ''
-        return `${icon}` + this.title
+        if (!icon) icon = this.info.$type === 'templates' ? 'ⓖ ' : ''
+        return `${icon} ` + this.title
       } else {
-        if(!icon) icon = '⌬'
-        return `   ${icon} ` + this.getDisabledText(this.info.disabled, this.title)
+        if (!icon) icon = '・'
+        return `${space}${icon} ` + this.getDisabledText(this.info.disabled, this.title)
       }
     }
     return this.getDisabledText(this.info.disabled, this.title)

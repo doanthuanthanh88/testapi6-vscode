@@ -1,10 +1,9 @@
-import * as vscode from 'vscode';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { load } from 'js-yaml';
+import { homedir } from 'os';
 import * as path from 'path';
-import { load } from 'js-yaml'
-import { homedir } from 'os'
-import { existsSync, writeFileSync, readFileSync } from 'fs';
-import { SCHEMA } from 'testapi6/dist/components/index'
-import { TreeItemLabel } from 'vscode';
+import { SCHEMA } from 'testapi6/dist/components/index';
+import * as vscode from 'vscode';
 
 export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
   private list = [] as any[]
@@ -100,19 +99,21 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
 
     list.sort((a, b) => a._label.toLowerCase() < b._label.toLowerCase() ? -1 : a._label.toLowerCase() > b._label.toLowerCase() ? 1 : 0)
 
-    let tmp = undefined
-    for (let i = list.length - 1; i >= 0; i--) {
-      const a = list[i]
-      const dir = a._label.substr(0, a._label.lastIndexOf('/'))
-      if (tmp === undefined) {
-        tmp = dir
-      } else if (tmp !== dir) {
-        list.splice(i + 1, 0, new TestApi6Item('divider', '★ ' + tmp, '', vscode.TreeItemCollapsibleState.None))
-        tmp = dir
+    if (!element) {
+      let tmp = undefined
+      for (let i = list.length - 1; i >= 0; i--) {
+        const a = list[i]
+        const dir = a._label.substr(0, a._label.lastIndexOf('/'))
+        if (tmp === undefined) {
+          tmp = dir
+        } else if (tmp !== dir) {
+          list.splice(i + 1, 0, new TestApi6Item('divider', '★ ' + (tmp?.toUpperCase() || 'DEFAULT'), '', vscode.TreeItemCollapsibleState.None))
+          tmp = dir
+        }
       }
-    }
-    if (tmp !== undefined) {
-      list.splice(0, 0, new TestApi6Item('divider', '★ ' + tmp, '---------------------', vscode.TreeItemCollapsibleState.None))
+      if (tmp !== undefined) {
+        list.splice(0, 0, new TestApi6Item('divider', '★ ' + (tmp?.toUpperCase() || 'DEFAULT ★'), '', vscode.TreeItemCollapsibleState.None))
+      }
     }
 
     for (const l of list.filter(l => l.context !== 'divider')) {
@@ -142,7 +143,7 @@ export class TestApi6Item extends vscode.TreeItem {
     this.contextValue = context
     this.tooltip = this.src || ''
     const start = this.src.length - 27
-    this.description = this.context !== 'divider' ? ('...' + this.tooltip.substr(start > 0 ? start : 0)) : ''
+    this.description = this.context !== 'divider' ? ('...' + this.tooltip.substr(start > 0 ? start : 0)) : this.src
   }
 
   // @ts-ignore
