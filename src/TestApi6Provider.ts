@@ -89,8 +89,15 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
           return typeof tag === 'object' && Object.keys(tag)[0] === 'Import'
         })
         list = importItems.map(tag => {
-          const file = tag[Object.keys(tag)[0]]
-          return new TestApi6Item('folder', file, path.join(path.dirname(element.src), file), vscode.TreeItemCollapsibleState.Collapsed)
+          let file = tag[Object.keys(tag)[0]]
+          let src = file
+          if (typeof file !== 'string') {
+            src = file.src
+            file = file.title || path.basename(src)
+          } else {
+            file = path.basename(src)
+          }
+          return new TestApi6Item('folder', file, path.join(path.dirname(element.src), src), vscode.TreeItemCollapsibleState.Collapsed)
         })
       } catch (err) {
         return [new TestApi6Item('file', '❌ Could not load this file', err.message, vscode.TreeItemCollapsibleState.None)]
