@@ -1,15 +1,15 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
-import fetch from 'node-fetch'
-import * as path from 'path'
 import { existsSync, readFileSync } from 'fs';
-import { TestApi6Item, TestApi6Provider } from './TestApi6Provider';
-import { basename } from 'path';
-import { TestApi6InspectProvider } from './TestApi6InspectProvider';
-import { load, InputYamlFile } from 'testapi6/dist/main'
-import { TestApi6ExampleProvider } from './TestApi6ExampleProvider';
 import { cloneDeep } from 'lodash';
+import fetch from 'node-fetch';
+import * as path from 'path';
+import { basename } from 'path';
+import { InputYamlFile, load } from 'testapi6/dist/main';
+import * as vscode from 'vscode';
+import { TestApi6ExampleProvider } from './TestApi6ExampleProvider';
+import { TestApi6InspectProvider } from './TestApi6InspectProvider';
+import { TestApi6Item, TestApi6Provider } from './TestApi6Provider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -144,13 +144,23 @@ export async function activate(context: vscode.ExtensionContext) {
     if (!file.endsWith('.yaml')) return null
     try {
       const { scenarioFile = file } = getFileRun(file, file)
-      const root = await load(new InputYamlFile(scenarioFile)) as any
-      await root.setup()
-      await scenarioInspectProvider.load(cloneDeep(root), 'scenario')
-      await docsInspectProvider.load(cloneDeep(root), 'docs')
-      await templateInspectProvider.load(cloneDeep(root), 'templates')
-      await varsInspectProvider.load(cloneDeep(root), 'vars')
-      await exampleProvider.load()
+      const rootScenario = await load(new InputYamlFile(scenarioFile)) as any
+      const rootDocs = cloneDeep(rootScenario)
+      const rootTemps = cloneDeep(rootScenario)
+      const rootVars = cloneDeep(rootScenario)
+      await Promise.all([
+        rootScenario.setup(),
+        rootDocs.setup(),
+        rootTemps.setup(),
+        rootVars.setup(),
+        exampleProvider.load()
+      ])
+      await Promise.all([
+        scenarioInspectProvider.load(rootScenario, 'scenario'),
+        docsInspectProvider.load(rootDocs, 'docs'),
+        templateInspectProvider.load(rootTemps, 'templates'),
+        varsInspectProvider.load(rootVars, 'vars'),
+      ])
       return scenarioFile
     } catch (err) {
       debugLog.appendLine('')
@@ -199,18 +209,18 @@ export async function activate(context: vscode.ExtensionContext) {
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.del', (h: any) => {
-    provider.remove(h)
+    provider.remove(h.src, h.folder)
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.refresh', (h: any) => {
-    provider.load()
+    // provider.load()
     provider.refresh()
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.edit', async (h: any) => {
     let scenarioPath = h.src
     const inp = vscode.window.createInputBox()
-    inp.value = h._label
+    inp.value = h.labelText
     inp.show()
     let label = await new Promise<string>(r => {
       let isAccepted: boolean
@@ -226,17 +236,20 @@ export async function activate(context: vscode.ExtensionContext) {
         r(inp.value || '')
       })
     })
-    if (label) provider.upsert(label.trim(), scenarioPath)
+    if (label) provider.upsert(label.trim(), scenarioPath, h.folder)
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.runinview', async (h: any) => {
     const scenarioPath = h.src
-    vscode.commands.executeCommand('testapi6.run', new TestApi6Item('folder', basename(scenarioPath), scenarioPath, vscode.TreeItemCollapsibleState.Collapsed))
+    // vscode.commands.executeCommand('testapi6.run', new TestApi6Item('folder', basename(scenarioPath), scenarioPath, vscode.TreeItemCollapsibleState.Collapsed))
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.add', async (h: any) => {
     const scenarioPath = (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
-    vscode.commands.executeCommand('testapi6.edit', new TestApi6Item('folder', basename(scenarioPath), scenarioPath, vscode.TreeItemCollapsibleState.Collapsed))
+    vscode.commands.executeCommand('testapi6.edit', {
+      label: basename(scenarioPath),
+      src: scenarioPath
+    })
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.run', async (h: any) => {

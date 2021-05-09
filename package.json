@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.31",
+	"version": "1.1.32",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -146,15 +146,15 @@
 			"view/item/context": [
 				{
 					"command": "testapi6.del",
-					"when": "view == testApi6 && viewItem != divider"
+					"when": "view == testApi6 && viewItem != root"
 				},
 				{
 					"command": "testapi6.edit",
-					"when": "view == testApi6 && viewItem != divider"
+					"when": "view == testApi6 && viewItem != root"
 				},
 				{
 					"command": "testapi6.open",
-					"when": "view == testApi6 && viewItem != divider",
+					"when": "view == testApi6 && viewItem != root",
 					"group": "inline"
 				},
 				{
@@ -164,7 +164,7 @@
 				},
 				{
 					"command": "testapi6.runinview",
-					"when": "view == testApi6 && viewItem != divider",
+					"when": "view == testApi6 && viewItem != root",
 					"group": "inline"
 				}
 			]
@@ -189,19 +189,14 @@
 		"esbuild-watch": "npm run -S esbuild-base -- --sourcemap --watch"
 	},
 	"devDependencies": {
-		"@types/glob": "^7.1.3",
 		"@types/js-yaml": "^4.0.0",
 		"@types/lodash": "^4.14.168",
-		"@types/mocha": "^8.0.0",
 		"@types/node": "^12.11.7",
 		"@types/node-fetch": "^2.5.7",
 		"@types/vscode": "^1.50.0",
 		"@typescript-eslint/eslint-plugin": "^4.1.1",
 		"@typescript-eslint/parser": "^4.1.1",
-		"esbuild": "^0.11.17",
 		"eslint": "^7.9.0",
-		"glob": "^7.1.6",
-		"mocha": "^8.1.3",
 		"typescript": "^4.0.2",
 		"vsce": "^1.87.0",
 		"vscode-test": "^1.4.0"
@@ -212,8 +207,8 @@
 	},
 	"dependencies": {
 		"chalk": "^4.1.0",
-		"escalade": "^3.1.1",
 		"js-yaml": "^4.0.0",
+		"lodash": "^4.17.21",
 		"node-fetch": "^2.6.1",
 		"testapi6": "^1.1.16"
 	},

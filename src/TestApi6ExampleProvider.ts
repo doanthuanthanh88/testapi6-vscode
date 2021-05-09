@@ -1,9 +1,7 @@
-import * as vscode from 'vscode';
-import 'testapi6/dist/init'
-import { Method, Templates } from 'testapi6/dist/components';
-import { context } from 'testapi6/dist/Context'
 import { loadAll } from 'js-yaml';
 import fetch from 'node-fetch';
+import 'testapi6/dist/init';
+import * as vscode from 'vscode';
 
 export class TestApi6ExampleProvider implements vscode.TreeDataProvider<TestApi6ExampleItem> {
   private list = [] as any[]
@@ -18,7 +16,7 @@ export class TestApi6ExampleProvider implements vscode.TreeDataProvider<TestApi6
       })
       const tmp = await res.text()
       const [cnt] = loadAll(tmp) as any[]
-      const examples = cnt.steps.map((e: any) => e && e['Import']).filter((e: string) => e)
+      const examples = cnt.steps.map((e: any) => e && e['Import']).filter((e: string) => e).map((e: any) => typeof e === 'object' ? e['src'] : e)
       examples.sort()
       let tree = examples.reduce((sum: any, e: string) => {
         const paths = e.split('/')

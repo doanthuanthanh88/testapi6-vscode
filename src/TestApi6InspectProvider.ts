@@ -52,7 +52,7 @@ export class TestApi6InspectProvider implements vscode.TreeDataProvider<TestApi6
             if (tag.tagName === 'Group') {
               scanDoc(tag)
             } else {
-              list.push(new TestApi6InspectItem(tagName, `${i++}. ${tag.title}`, tagName + `<${(tag.docs?.tags || tag.docs?.swagger || tag.docs?.md || []).join('|')}>`, tag, true, vscode.TreeItemCollapsibleState.None))
+              list.push(new TestApi6InspectItem(tagName, `${i++}. ${tag.title}`, tagName + `<${(tag.docs?.tags || tag.docs?.swagger?.tags || tag.docs?.md?.tags || []).join('|')}>`, tag, true, vscode.TreeItemCollapsibleState.None))
             }
           })
         }
