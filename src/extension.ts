@@ -240,8 +240,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.runinview', async (h: any) => {
-    const scenarioPath = h.src
-    // vscode.commands.executeCommand('testapi6.run', new TestApi6Item('folder', basename(scenarioPath), scenarioPath, vscode.TreeItemCollapsibleState.Collapsed))
+    vscode.commands.executeCommand('testapi6.run', { scheme: 'file', path: h.src })
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.add', async (h: any) => {
@@ -266,7 +265,7 @@ export async function activate(context: vscode.ExtensionContext) {
       // 		}
       // 	}
       // }
-      let scenarioPath = h instanceof TestApi6Item ? h.src : (h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath
+      let scenarioPath = h instanceof TestApi6Item ? h.src : ((h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath)
       const { scenarioFile = '', isClose = false } = getFileRun(scenarioPath, lastScenario)
       let decryptPassword = ''
       if (scenarioFile?.endsWith('.encrypt')) {
