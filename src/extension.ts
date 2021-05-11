@@ -140,7 +140,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   }
 
-  async function yamlChange(file: string) {
+  async function yamlChange(file: string, isForceShowError: boolean) {
     if (!file.endsWith('.yaml')) return null
     try {
       const { scenarioFile = file } = getFileRun(file, file)
@@ -166,18 +166,18 @@ export async function activate(context: vscode.ExtensionContext) {
       debugLog.appendLine('')
       debugLog.appendLine(err.message)
       debugLog.appendLine(err.stack)
-      debugLog.show(true)
+      debugLog.show(isForceShowError)
     }
     return null
   }
 
   context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(async (a) => {
     let file = a?.fileName || ''
-    await yamlChange(file)
+    await yamlChange(file, true)
   }))
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(async (a) => {
     let file = vscode.window.activeTextEditor?.document.fileName || a?.document.fileName || ''
-    const outFile = await yamlChange(file)
+    const outFile = await yamlChange(file, false)
     if (outFile) updateStatusBar(outFile)
   }))
 
