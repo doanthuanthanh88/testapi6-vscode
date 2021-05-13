@@ -75,9 +75,9 @@
   integrity sha512-cxWFQVseBm6O9Gbw1IWb8r6OS4OhSt3hPZLkFApLjM8TEXROBuQGLAH2i2gZpcXdLBIrpXuTDhH7Vbm1iXmNGA==
 
 "@types/lodash@^4.14.168":
-  version "4.14.168"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"
-  integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
+  version "4.14.169"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.169.tgz#83c217688f07a4d9ef8f28a3ebd1d318f6ff4cbb"
+  integrity sha512-DvmZHoHTFJ8zhVYwCLWbQ7uAbYQEk52Ev2/ZiQ7Y7gQGeV9pjBqjnQpECMHfKS1rCYAhMI7LHVxwyZLZinJgdw==
 
 "@types/node-fetch@^2.5.7":
   version "2.5.10"
@@ -88,14 +88,14 @@
     form-data "^3.0.0"
 
 "@types/node@*":
-  version "15.0.2"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.0.2.tgz#51e9c0920d1b45936ea04341aa3e2e58d339fb67"
-  integrity sha512-p68+a+KoxpoB47015IeYZYRrdqMUcpbK8re/zpFB8Ld46LHC1lPEbp3EXgkEhAYEcPvjJF6ZO+869SQ0aH1dcA==
+  version "15.0.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.0.3.tgz#ee09fcaac513576474c327da5818d421b98db88a"
+  integrity sha512-/WbxFeBU+0F79z9RdEOXH4CsDga+ibi5M8uEYr91u3CkT/pdWcV8MCook+4wDPnZBexRdwWS+PiVZ2xJviAzcQ==
 
 "@types/node@^12.11.7":
-  version "12.20.12"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.12.tgz#fd9c1c2cfab536a2383ed1ef70f94adea743a226"
-  integrity sha512-KQZ1al2hKOONAs2MFv+yTQP1LkDWMrRJ9YCVRalXltOfXsBmH5IownLxQaiq0lnAHwAViLnh2aTYqrPcRGEbgg==
+  version "12.20.13"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.13.tgz#e743bae112bd779ac9650f907197dd2caa7f0364"
+  integrity sha512-1x8W5OpxPq+T85OUsHRP6BqXeosKmeXRtjoF39STcdf/UWLqUsoehstZKOi0CunhVqHG17AyZgpj20eRVooK6A==
 
 "@types/vscode@^1.50.0":
   version "1.56.0"
@@ -1792,9 +1792,9 @@ table@^6.0.4:
     strip-ansi "^6.0.0"
 
 testapi6@^1.1.16:
-  version "1.1.29"
-  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.1.29.tgz#e108105ece574803c2beff2b0f9e7b99b6546510"
-  integrity sha512-GjrgQMqvsL9rxHvN2IhS3aHyB7k7hnit8BHZbueQpof5V2aYQ68J3L7ti36B1RxgaXDGz+9UX9o79fH7U/88Hw==
+  version "1.1.30"
+  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.1.30.tgz#ee46f9fc7a0e9cd5d5b1b44f4cc2ee9518944311"
+  integrity sha512-K2yPxTmfDSJks2gRInN75vXQOdzUGcV+daV6wvqFptWUgjgS0nygU03uCoX2Mz2r4j1rDuuxi0wz/JMIe7bz7A==
   dependencies:
     axios "^0.21.0"
     chai "^4.3.3"

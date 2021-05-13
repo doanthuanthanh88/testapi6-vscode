@@ -142,6 +142,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   async function yamlChange(file: string, isForceShowError: boolean) {
     if (!file.endsWith('.yaml')) return null
+    debugLog.clear()
     try {
       const { scenarioFile = file } = getFileRun(file, file)
       const rootScenario = await load(new InputYamlFile(scenarioFile)) as any
@@ -166,7 +167,7 @@ export async function activate(context: vscode.ExtensionContext) {
       debugLog.appendLine('')
       debugLog.appendLine(err.message)
       debugLog.appendLine(err.stack)
-      debugLog.show(isForceShowError)
+      debugLog.show(!isForceShowError)
     }
     return null
   }
