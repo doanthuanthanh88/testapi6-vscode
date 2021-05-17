@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.37",
+	"version": "1.1.38",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -11,7 +11,8 @@
 		"Snippets"
 	],
 	"activationEvents": [
-		"onView:testApi6",
+		"onView:testApi6Global",
+		"onView:testApi6Local",
 		"onView:testApi6ScenarioInspect",
 		"onView:testApi6TemplatesInspect",
 		"onView:testApi6VarsInspect",
@@ -50,7 +51,11 @@
 			],
 			"explorer": [
 				{
-					"id": "testApi6",
+					"id": "testApi6Local",
+					"name": "TestAPI6 In App"
+				},
+				{
+					"id": "testApi6Global",
 					"name": "TestAPI6 Bookmark"
 				}
 			]
@@ -148,31 +153,45 @@
 			"view/title": [
 				{
 					"command": "testapi6.refresh",
-					"when": "view == testApi6"
+					"when": "view == testApi6Global"
+				},
+				{
+					"command": "testapi6.refresh",
+					"when": "view == testApi6Local"
 				}
 			],
 			"view/item/context": [
 				{
 					"command": "testapi6.del",
-					"when": "view == testApi6 && viewItem != root"
+					"when": "view == testApi6Global && viewItem != root"
 				},
 				{
 					"command": "testapi6.edit",
-					"when": "view == testApi6 && viewItem != root"
+					"when": "view == testApi6Global && viewItem != root"
 				},
 				{
 					"command": "testapi6.open",
-					"when": "view == testApi6 && viewItem != root",
+					"when": "view == testApi6Global && viewItem != root",
+					"group": "inline"
+				},
+				{
+					"command": "testapi6.runinview",
+					"when": "view == testApi6Global && viewItem != root",
+					"group": "inline"
+				},
+				{
+					"command": "testapi6.open",
+					"when": "view == testApi6Local && viewItem != base",
+					"group": "inline"
+				},
+				{
+					"command": "testapi6.runinview",
+					"when": "view == testApi6Local && viewItem != base",
 					"group": "inline"
 				},
 				{
 					"command": "testapi6.openExample",
 					"when": "view == testApi6ExampleProvider && viewItem == file",
-					"group": "inline"
-				},
-				{
-					"command": "testapi6.runinview",
-					"when": "view == testApi6 && viewItem != root",
 					"group": "inline"
 				}
 			]

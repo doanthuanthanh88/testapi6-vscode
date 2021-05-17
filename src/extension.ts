@@ -9,7 +9,9 @@ import { InputYamlFile, load } from 'testapi6/dist/main';
 import * as vscode from 'vscode';
 import { TestApi6ExampleProvider } from './TestApi6ExampleProvider';
 import { TestApi6InspectProvider } from './TestApi6InspectProvider';
-import { TestApi6Item, TestApi6Provider } from './TestApi6Provider';
+import { TestApi6GlobalProvider } from './TestApi6GlobalProvider';
+import { TestApi6LocalProvider } from './TestApi6LocalProvider';
+import { TestApi6Item } from './TestApi6Item';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -111,7 +113,9 @@ export async function activate(context: vscode.ExtensionContext) {
   const varsInspectProvider = new TestApi6InspectProvider()
   const docsInspectProvider = new TestApi6InspectProvider()
   const exampleProvider = new TestApi6ExampleProvider()
-  const provider = new TestApi6Provider()
+  const globalProvider = new TestApi6GlobalProvider()
+
+  const localProvider = new TestApi6LocalProvider(vscode.workspace.workspaceFolders?.map(f => f.uri.toString().replace('file:', '')) || [])
 
   vscode.window.onDidCloseTerminal(e => {
     if (e.name.startsWith('TestAPI6:')) {
@@ -189,7 +193,8 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.window.registerTreeDataProvider('testApi6VarsInspect', varsInspectProvider);
   vscode.window.registerTreeDataProvider('testApi6DocsInspect', docsInspectProvider);
   vscode.window.registerTreeDataProvider('testApi6ExampleProvider', exampleProvider);
-  vscode.window.registerTreeDataProvider('testApi6', provider);
+  vscode.window.registerTreeDataProvider('testApi6Global', globalProvider);
+  vscode.window.registerTreeDataProvider('testApi6Local', localProvider);
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.guide', () => {
     vscode.env.openExternal(vscode.Uri.parse('https://github.com/doanthuanthanh88/testapi6'));
@@ -205,17 +210,18 @@ export async function activate(context: vscode.ExtensionContext) {
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.open', async (h: any) => {
-    const a = await vscode.workspace.openTextDocument(vscode.Uri.parse("file://" + h.src))
+    const a = await vscode.workspace.openTextDocument(vscode.Uri.parse("file:" + h.src))
     await vscode.window.showTextDocument(a)
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.del', (h: any) => {
-    provider.remove(h.src, h.folder)
+    globalProvider.remove(h.src, h.folder)
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.refresh', (h: any) => {
-    // provider.load()
-    provider.refresh()
+    // globalProvider.load()
+    localProvider.refresh()
+    globalProvider.refresh()
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.edit', async (h: any) => {
@@ -237,7 +243,7 @@ export async function activate(context: vscode.ExtensionContext) {
         r(inp.value || '')
       })
     })
-    if (label) provider.upsert(label.trim(), scenarioPath, h.folder)
+    if (label) globalProvider.upsert(label.trim(), scenarioPath, h.folder)
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.runinview', async (h: any) => {

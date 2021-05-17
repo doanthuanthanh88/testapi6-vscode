@@ -1,0 +1,42 @@
+import * as vscode from 'vscode';
+
+export class TestApi6Item extends vscode.TreeItem {
+  constructor(
+    public context: 'root' | 'folder' | 'file' | 'base',
+    public _label: string,
+    public readonly src: string,
+    public readonly folder: any,
+    public readonly childs: any[],
+    public readonly description: string,
+    public collapsibleState: vscode.TreeItemCollapsibleState,
+  ) {
+    super('', collapsibleState);
+    this.contextValue = context
+    this.tooltip = this.src || ''
+  }
+
+  get labelText() {
+    if (!this.label) return ''
+    return this.label.replaceAll('★ ', '').replaceAll('├ ', '')
+  }
+
+  get folderText() {
+    if (!this.folder) return ''
+    return this.folder.replaceAll('★ ', '').replaceAll('├ ', '')
+  }
+
+  // @ts-ignore
+  set label(_: any) { }
+
+  // @ts-ignore
+  get label() {
+    // const dir = this._label.substr(0, this._label.lastIndexOf('/'))
+    return (this.context === 'base' ? '▶ ' : this.context === 'root' ? '★ ' : this.context === 'file' ? '├ ' : this.context === 'folder' ? '├ ' : '') + this._label
+    // return dir.length > 0 ? a.replace(dir + '/', '') : a
+  }
+
+  // iconPath = {
+  //   light: path.join(__filename, '..', '..', 'resources', 'light', 'TestApi6Item.svg'),
+  //   dark: path.join(__filename, '..', '..', 'resources', 'dark', 'TestApi6Item.svg')
+  // };
+}

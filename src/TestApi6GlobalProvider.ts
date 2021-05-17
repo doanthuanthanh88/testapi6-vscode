@@ -4,8 +4,9 @@ import { homedir } from 'os';
 import * as path from 'path';
 import { SCHEMA } from 'testapi6/dist/components/index';
 import * as vscode from 'vscode';
+import { TestApi6Item } from './TestApi6Item';
 
-export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
+export class TestApi6GlobalProvider implements vscode.TreeDataProvider<TestApi6Item> {
   private list = {} as any
 
   constructor(public dataFile = path.join(homedir(), '.testapi6.data')) {
@@ -36,10 +37,6 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
   getTreeItem(element: TestApi6Item): vscode.TreeItem {
     return element;
   }
-
-  // contains(src: string) {
-  //   return this.list.find(e => e.src === src)
-  // }
 
   remove(src: string, folder: string, isReload = true) {
     if (folder) {
@@ -141,46 +138,4 @@ export class TestApi6Provider implements vscode.TreeDataProvider<TestApi6Item> {
       return new TestApi6Item(item.context === 'root' ? 'root' : item.childs.length ? 'folder' : 'file', item.label, item.src, item.folder, item.childs, item.description || '', item.childs.length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None)
     })
   }
-
-}
-
-export class TestApi6Item extends vscode.TreeItem {
-  constructor(
-    public context: 'root' | 'folder' | 'file',
-    public _label: string,
-    public readonly src: string,
-    public readonly folder: any,
-    public readonly childs: any[],
-    public readonly description: string,
-    public collapsibleState: vscode.TreeItemCollapsibleState,
-  ) {
-    super('', collapsibleState);
-    this.contextValue = context
-    this.tooltip = this.src || ''
-  }
-
-  get labelText() {
-    if (!this.label) return ''
-    return this.label.replaceAll('★ ', '').replaceAll('├ ', '')
-  }
-
-  get folderText() {
-    if (!this.folder) return ''
-    return this.folder.replaceAll('★ ', '').replaceAll('├ ', '')
-  }
-
-  // @ts-ignore
-  set label(_: any) { }
-
-  // @ts-ignore
-  get label() {
-    // const dir = this._label.substr(0, this._label.lastIndexOf('/'))
-    return (this.context === 'root' ? '★ ' : this.context === 'file' ? '├ ' : this.context === 'folder' ? '├ ' : '') + this._label
-    // return dir.length > 0 ? a.replace(dir + '/', '') : a
-  }
-
-  // iconPath = {
-  //   light: path.join(__filename, '..', '..', 'resources', 'light', 'TestApi6Item.svg'),
-  //   dark: path.join(__filename, '..', '..', 'resources', 'dark', 'TestApi6Item.svg')
-  // };
 }
