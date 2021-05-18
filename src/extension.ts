@@ -145,7 +145,6 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   async function yamlChange(file: string, isForceShowError: boolean) {
-    if (!file.endsWith('.yaml')) return null
     debugLog.clear()
     try {
       const { scenarioFile = file } = getFileRun(file, file)
@@ -178,12 +177,20 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(async (a) => {
     let file = a?.fileName || ''
-    await yamlChange(file, true)
+    if (file.endsWith('.yaml')) {
+      if (basename(file) === '.yaml') {
+        localProvider.refresh()
+      } else {
+        await yamlChange(file, true)
+      }
+    }
   }))
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(async (a) => {
     let file = vscode.window.activeTextEditor?.document.fileName || a?.document.fileName || ''
-    const outFile = await yamlChange(file, false)
-    if (outFile) updateStatusBar(outFile)
+    if (file.endsWith('.yaml') && basename(file) !== '.yaml') {
+      const outFile = await yamlChange(file, false)
+      if (outFile) updateStatusBar(outFile)
+    }
   }))
 
   updateStatusBar(lastScenario)
@@ -247,7 +254,19 @@ export async function activate(context: vscode.ExtensionContext) {
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.runinview', async (h: any) => {
-    vscode.commands.executeCommand('testapi6.run', { scheme: 'file', path: h.src })
+    if (h.src) {
+      vscode.commands.executeCommand('testapi6.run', { scheme: 'file', path: h.src })
+    } else if (h.cmd && h.cmd.length) {
+      const name = path.basename(h._label || 'TestAPI6 Command')
+      const terName = 'TestAPI6:' + name
+      let terObj = ter.get(terName)
+      if (!terObj) {
+        terObj = vscode.window.createTerminal(terName)
+        ter.set(terName, terObj);
+      }
+      (h.cmd as string[]).map(e => e.trim()).filter(e => e).forEach(cmd => terObj?.sendText(cmd))
+      terObj.show(true)
+    }
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.add', async (h: any) => {
@@ -263,15 +282,6 @@ export async function activate(context: vscode.ExtensionContext) {
     if (!isSetConfig) await setConfig()
     isSetConfig = true
     try {
-      // const content = []
-      // if (vscode.window.activeTextEditor) {
-      // 	for (const s of vscode.window.activeTextEditor.selections) {
-      // 		const tmp = vscode.window.activeTextEditor.document.getText(s)
-      // 		if (tmp && tmp.trim().length > 0) {
-      // 			content.push(tmp)
-      // 		}
-      // 	}
-      // }
       let scenarioPath = h instanceof TestApi6Item ? h.src : ((h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath)
       const { scenarioFile = '', isClose = false } = getFileRun(scenarioPath, lastScenario)
       let decryptPassword = ''
@@ -302,10 +312,6 @@ export async function activate(context: vscode.ExtensionContext) {
         ter.set(terName, terObj)
       }
       terObj.show(true)
-      // if (content.length > 0) {
-      // 	lastScenario = path.join(os.tmpdir(), name)
-      // 	writeFileSync(lastScenario, content.join('\n'))
-      // }
       lastScenario = scenarioFile
       updateStatusBar(lastScenario)
       terObj.sendText(`${nodeBin} ${scenarioFile} ${decryptPassword}`)

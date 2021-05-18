@@ -82,7 +82,8 @@ export class TestApi6GlobalProvider implements vscode.TreeDataProvider<TestApi6I
       this.list[newFolder].push({
         folder: newFolder,
         label,
-        src
+        src,
+        cmd: undefined
       })
     }
     this.list[newFolder].sort((a: any, b: any) => {
@@ -108,6 +109,7 @@ export class TestApi6GlobalProvider implements vscode.TreeDataProvider<TestApi6I
           label: k.toUpperCase(),
           folder: k.toUpperCase(),
           src: '',
+          cmd: '',
           description: '',
           childs: this.list[k]
         }
@@ -132,10 +134,10 @@ export class TestApi6GlobalProvider implements vscode.TreeDataProvider<TestApi6I
               return { label: obj.label, src: path.join(path.dirname(item.src), obj.src) }
             })
         } catch (err) {
-          return new TestApi6Item('file', err.message, item.src, item.folder, [], item.src, vscode.TreeItemCollapsibleState.None)
+          return new TestApi6Item('file', err.message, item.src, item.cmd, item.folder, [], item.src, vscode.TreeItemCollapsibleState.None)
         }
       }
-      return new TestApi6Item(item.context === 'root' ? 'root' : item.childs.length ? 'folder' : 'file', item.label, item.src, item.folder, item.childs, item.description || '', item.childs.length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None)
+      return new TestApi6Item(item.context === 'root' ? 'root' : item.childs.length ? 'folder' : 'file', item.label, item.src, item.cmd, item.folder, item.childs, item.description || '', item.childs.length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None)
     })
   }
 }

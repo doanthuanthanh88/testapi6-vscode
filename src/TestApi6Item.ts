@@ -2,9 +2,10 @@ import * as vscode from 'vscode';
 
 export class TestApi6Item extends vscode.TreeItem {
   constructor(
-    public context: 'root' | 'folder' | 'file' | 'base',
+    public context: 'root' | 'folder' | 'file' | 'cmd',
     public _label: string,
     public readonly src: string,
+    public readonly cmd: string,
     public readonly folder: any,
     public readonly childs: any[],
     public readonly description: string,
@@ -31,7 +32,7 @@ export class TestApi6Item extends vscode.TreeItem {
   // @ts-ignore
   get label() {
     // const dir = this._label.substr(0, this._label.lastIndexOf('/'))
-    return (this.context === 'base' ? '▶ ' : this.context === 'root' ? '★ ' : this.context === 'file' ? '├ ' : this.context === 'folder' ? '├ ' : '') + this._label
+    return (this.context === 'cmd' ? '▶ ' : this.context === 'root' ? '' : this.context === 'file' ? 'ϟ ' : this.context === 'folder' ? 'ϟ ' : '') + this._label
     // return dir.length > 0 ? a.replace(dir + '/', '') : a
   }
 
