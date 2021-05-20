@@ -12,6 +12,8 @@ import { TestApi6InspectProvider } from './TestApi6InspectProvider';
 import { TestApi6GlobalProvider } from './TestApi6GlobalProvider';
 import { TestApi6LocalProvider } from './TestApi6LocalProvider';
 import { TestApi6Item } from './TestApi6Item';
+import { homedir } from 'os';
+import { TestApi6HistoryProvider } from './TestApi6HistoryProvider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -116,6 +118,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const globalProvider = new TestApi6GlobalProvider()
 
   const localProvider = new TestApi6LocalProvider(vscode.workspace.workspaceFolders?.map(f => f.uri.toString().replace('file:', '')) || [])
+  const historyProvider = new TestApi6HistoryProvider()
 
   vscode.window.onDidCloseTerminal(e => {
     if (e.name.startsWith('TestAPI6:')) {
@@ -201,6 +204,7 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.window.registerTreeDataProvider('testApi6DocsInspect', docsInspectProvider);
   vscode.window.registerTreeDataProvider('testApi6ExampleProvider', exampleProvider);
   vscode.window.registerTreeDataProvider('testApi6Global', globalProvider);
+  vscode.window.registerTreeDataProvider('testApi6History', historyProvider);
   vscode.window.registerTreeDataProvider('testApi6Local', localProvider);
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.guide', () => {
@@ -255,8 +259,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.runinview', async (h: any) => {
     if (h.src) {
+      historyProvider.push({ ...h, context: 'cmd' })
       vscode.commands.executeCommand('testapi6.run', { scheme: 'file', path: h.src })
     } else if (h.cmd && h.cmd.length) {
+      historyProvider.push({ ...h, context: 'file' })
       const name = path.basename(h._label || 'TestAPI6 Command')
       const terName = 'TestAPI6:' + name
       let terObj = ter.get(terName)
@@ -305,6 +311,17 @@ export async function activate(context: vscode.ExtensionContext) {
         })
       }
       const name = path.basename(scenarioFile)
+
+      if (h instanceof TestApi6Item) {
+        historyProvider.push({ ...h, context: 'file' })
+      } else {
+        historyProvider.push({ 
+          _label: scenarioFile,
+          src: scenarioFile,
+          context: 'file' 
+        })
+      }
+
       const terName = 'TestAPI6:' + name
       let terObj = ter.get(terName)
       if (!terObj) {

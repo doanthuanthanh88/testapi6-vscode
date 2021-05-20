@@ -32,7 +32,13 @@ export class TestApi6Item extends vscode.TreeItem {
   // @ts-ignore
   get label() {
     // const dir = this._label.substr(0, this._label.lastIndexOf('/'))
-    return (this.context === 'cmd' ? '▶ ' : this.context === 'root' ? '' : this.context === 'file' ? 'ϟ ' : this.context === 'folder' ? 'ϟ ' : '') + this._label
+    let label = ''
+    if (this._label.length > 30) {
+      label = '...' + this._label.substr(this._label.length - 30)
+    } else {
+      label = this._label
+    }
+    return (this.context === 'cmd' ? '▶ ' : this.context === 'root' ? '' : this.context === 'file' ? 'ϟ ' : this.context === 'folder' ? 'ϟ ' : '') + label
     // return dir.length > 0 ? a.replace(dir + '/', '') : a
   }
 

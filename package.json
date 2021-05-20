@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.40",
+	"version": "1.1.41",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -13,6 +13,7 @@
 	"activationEvents": [
 		"onView:testApi6Global",
 		"onView:testApi6Local",
+		"onView:testApi6History",
 		"onView:testApi6ScenarioInspect",
 		"onView:testApi6TemplatesInspect",
 		"onView:testApi6VarsInspect",
@@ -53,6 +54,10 @@
 				{
 					"id": "testApi6Local",
 					"name": "TestAPI6 In App"
+				},
+				{
+					"id": "testApi6History",
+					"name": "TestAPI6 History"
 				},
 				{
 					"id": "testApi6Global",
@@ -180,6 +185,11 @@
 					"group": "inline"
 				},
 				{
+					"command": "testapi6.runinview",
+					"when": "view == testApi6History",
+					"group": "inline"
+				},
+				{
 					"command": "testapi6.open",
 					"when": "view == testApi6Local && viewItem == file",
 					"group": "inline"
@@ -251,6 +261,7 @@
 		"chalk": "^4.1.0",
 		"js-yaml": "^4.0.0",
 		"lodash": "^4.17.21",
+		"moment": "^2.29.1",
 		"node-fetch": "^2.6.1",
 		"testapi6": "^1.1.16"
 	},
