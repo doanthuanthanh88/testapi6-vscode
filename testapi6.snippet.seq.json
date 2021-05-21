@@ -2,126 +2,126 @@
   "Sequence message": {
     "prefix": "@mes.seq",
     "body": [
-      "// - ${0}"
+      "$LINE_COMMENT - ${0}"
     ],
     "description": "Request to service self"
   },
   "Sequence request": {
     "prefix": "@req.seq",
     "body": [
-      "// - ${1:\\$this} => ${2}: ${0}"
+      "$LINE_COMMENT - ${1:\\$this} => ${2}: ${0}"
     ],
     "description": "Request to service"
   },
   "Sequence response": {
     "prefix": "@res.seq",
     "body": [
-      "// - ${2:\\$this} <= ${1}: ${0}"
+      "$LINE_COMMENT - ${2:\\$this} <= ${1}: ${0}"
     ],
     "description": "Response to service"
   },
   "Sequence publish": {
     "prefix": "@pub.seq",
     "body": [
-      "// - ${1:\\$this} -> ${2}: ${0}"
+      "$LINE_COMMENT - ${1:\\$this} -> ${2}: ${0}"
     ],
     "description": "Publish message"
   },
   "Sequence subscribe": {
     "prefix": "@sub.seq",
     "body": [
-      "// - ${2:\\$this} <- ${1}: ${0}"
+      "$LINE_COMMENT - ${2:\\$this} <- ${1}: ${0}"
     ],
     "description": "Subscribe message"
   },
   "Sequence call next": {
     "prefix": "@next.seq",
     "body": [
-      "// - ${1:\\$this} > ${2}: ${0}"
+      "$LINE_COMMENT - ${1:\\$this} > ${2}: ${0}"
     ],
     "description": "Next step"
   },
   "Sequence call back": {
     "prefix": "@back.seq",
     "body": [
-      "// - ${2:\\$this} < ${1}: ${0}"
+      "$LINE_COMMENT - ${2:\\$this} < ${1}: ${0}"
     ],
     "description": "Back step"
   },
   "Sequence package": {
     "prefix": "@pack.seq",
     "body": [
-      "// @ ${0}"
+      "$LINE_COMMENT @ ${0}"
     ],
     "description": "Default package"
   },
   "Sequence loop": {
     "prefix": "@loop.seq",
     "body": [
-      "// + LOOP: ${0}"
+      "$LINE_COMMENT + LOOP: ${0}"
     ],
     "description": "LOOP"
   },
   "Sequence eloop": {
     "prefix": "@eloop.seq",
     "body": [
-      "// + END_LOOP"
+      "$LINE_COMMENT + END_LOOP"
     ],
     "description": "END_LOOP"
   },
   "Sequence parallel": {
     "prefix": "@parallel.seq",
     "body": [
-      "// + PARALLEL: ${0}"
+      "$LINE_COMMENT + PARALLEL: ${0}"
     ],
     "description": "FOR"
   },
   "Sequence eparallel": {
     "prefix": "@eparallel.seq",
     "body": [
-      "// + END_PARALLEL"
+      "$LINE_COMMENT + END_PARALLEL"
     ],
     "description": "END_PARALLEL"
   },
   "Sequence if": {
     "prefix": "@if.seq",
     "body": [
-      "// + IF: ${0}"
+      "$LINE_COMMENT + IF: ${0}"
     ],
     "description": "IF"
   },
   "Sequence elseif": {
     "prefix": "@elif.seq",
     "body": [
-      "// + ELSE_IF: ${0}"
+      "$LINE_COMMENT + ELSE_IF: ${0}"
     ],
     "description": "ELSE_IF"
   },
   "Sequence else": {
     "prefix": "@else.seq",
     "body": [
-      "// + ELSE"
+      "$LINE_COMMENT + ELSE"
     ],
     "description": "ELSE"
   },
   "Sequence eif": {
     "prefix": "@eif.seq",
     "body": [
-      "// + END_IF"
+      "$LINE_COMMENT + END_IF"
     ],
     "description": "END_IF"
   },
   "Sequence func": {
     "prefix": "@func.seq",
     "body": [
-      "// > ${0}"
+      "$LINE_COMMENT > ${0}"
     ],
     "description": "Declare a function"
   },
   "Sequence call function": {
     "prefix": "@call.seq",
     "body": [
-      "// < ${0}"
+      "$LINE_COMMENT < ${0}"
     ],
     "description": "Call a function"
   }

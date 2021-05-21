@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.44",
+	"version": "1.1.45",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -71,11 +71,63 @@
 				"path": "testapi6.snippet.json"
 			},
 			{
+				"language": "cpp",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "c",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "csharp",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "go",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "java",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
 				"language": "javascript",
 				"path": "testapi6.snippet.seq.json"
 			},
 			{
+				"language": "jsx",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "lua",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "php",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "python",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "rust",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "shellscript",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "swift",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
 				"language": "typescript",
+				"path": "testapi6.snippet.seq.json"
+			},
+			{
+				"language": "typescriptreact",
 				"path": "testapi6.snippet.seq.json"
 			}
 		],
@@ -94,11 +146,6 @@
 				"command": "testapi6.run",
 				"category": "testapi6",
 				"title": "Start"
-			},
-			{
-				"command": "testapi6.guide",
-				"category": "testapi6",
-				"title": "Guide"
 			},
 			{
 				"command": "testapi6.add",
@@ -135,11 +182,6 @@
 				{
 					"when": "resourceLangId == yaml",
 					"command": "testapi6.run",
-					"group": "testapi6"
-				},
-				{
-					"when": "resourceLangId == yaml",
-					"command": "testapi6.guide",
 					"group": "testapi6"
 				},
 				{

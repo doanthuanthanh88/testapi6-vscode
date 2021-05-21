@@ -206,10 +206,6 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.window.registerTreeDataProvider('testApi6History', historyProvider);
   vscode.window.registerTreeDataProvider('testApi6Local', localProvider);
 
-  context.subscriptions.push(vscode.commands.registerCommand('testapi6.guide', () => {
-    vscode.env.openExternal(vscode.Uri.parse('https://github.com/doanthuanthanh88/testapi6'));
-  }))
-
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.openExample', async (h: any) => {
     const content = await exampleProvider.getContent(h.des)
     const document = await vscode.workspace.openTextDocument({
@@ -314,10 +310,10 @@ export async function activate(context: vscode.ExtensionContext) {
       if (h instanceof TestApi6Item) {
         historyProvider.push({ ...h, context: 'file' })
       } else {
-        historyProvider.push({ 
+        historyProvider.push({
           _label: scenarioFile,
           src: scenarioFile,
-          context: 'file' 
+          context: 'file'
         })
       }
 
