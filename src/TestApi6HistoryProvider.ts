@@ -1,11 +1,9 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { load } from 'js-yaml';
-import moment = require('moment');
 import { homedir } from 'os';
 import * as path from 'path';
-import { SCHEMA } from 'testapi6/dist/components/index';
 import * as vscode from 'vscode';
 import { TestApi6Item } from './TestApi6Item';
+import moment = require('moment');
 
 export class TestApi6HistoryProvider implements vscode.TreeDataProvider<TestApi6Item> {
   private list = [] as any[]
@@ -59,7 +57,7 @@ export class TestApi6HistoryProvider implements vscode.TreeDataProvider<TestApi6
 
   async getChildren(_element?: TestApi6Item) {
     return this.list.map((k: any) => {
-      return new TestApi6Item(k.context || 'file', k.des, k.src, k.cmd, '', [], `${k._label}`, vscode.TreeItemCollapsibleState.None)
+      return new TestApi6Item(k.context || 'file', k._label, k.src, k.cmd, '', [], `( ${k.des} )`, vscode.TreeItemCollapsibleState.None)
     })
   }
 }

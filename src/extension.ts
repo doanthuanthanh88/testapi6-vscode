@@ -8,12 +8,11 @@ import { basename } from 'path';
 import { InputYamlFile, load } from 'testapi6/dist/main';
 import * as vscode from 'vscode';
 import { TestApi6ExampleProvider } from './TestApi6ExampleProvider';
-import { TestApi6InspectProvider } from './TestApi6InspectProvider';
 import { TestApi6GlobalProvider } from './TestApi6GlobalProvider';
-import { TestApi6LocalProvider } from './TestApi6LocalProvider';
-import { TestApi6Item } from './TestApi6Item';
-import { homedir } from 'os';
 import { TestApi6HistoryProvider } from './TestApi6HistoryProvider';
+import { TestApi6InspectProvider } from './TestApi6InspectProvider';
+import { TestApi6Item } from './TestApi6Item';
+import { TestApi6LocalProvider } from './TestApi6LocalProvider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

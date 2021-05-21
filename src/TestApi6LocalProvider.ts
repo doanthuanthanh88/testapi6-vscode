@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { load } from 'js-yaml';
 import * as path from 'path';
 import { SCHEMA } from 'testapi6/dist/components/index';
