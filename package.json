@@ -28,12 +28,6 @@
 	},
 	"contributes": {
 		"views": {
-			"debug": [
-				{
-					"id": "testApi6HistoryDebug",
-					"name": "TestAPI6 History"
-				}
-			],
 			"test": [
 				{
 					"id": "testApi6ScenarioInspect",
