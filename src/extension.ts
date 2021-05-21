@@ -259,10 +259,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.runinview', async (h: any) => {
     if (h.src) {
-      historyProvider.push({ ...h, context: 'cmd' })
+      historyProvider.push({ ...h, context: 'file' })
       vscode.commands.executeCommand('testapi6.run', { scheme: 'file', path: h.src })
     } else if (h.cmd && h.cmd.length) {
-      historyProvider.push({ ...h, context: 'file' })
+      historyProvider.push({ ...h, context: 'cmd' })
       const name = path.basename(h._label || 'TestAPI6 Command')
       const terName = 'TestAPI6:' + name
       let terObj = ter.get(terName)

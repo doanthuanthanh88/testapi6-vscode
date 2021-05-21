@@ -89,12 +89,12 @@ export class TestApi6LocalProvider implements vscode.TreeDataProvider<TestApi6It
               return { label: obj.label, src: path.join(path.dirname(item.src), obj.src) }
             })
         } catch (err) {
-          return new TestApi6Item('file', err.message, item.src, item.cmd, item.folder, [], item.src, vscode.TreeItemCollapsibleState.None)
+          return new TestApi6Item('file', err.message, item.src, item.cmd, item.folder, [], item.src ? `( ${item.src} )` : '', vscode.TreeItemCollapsibleState.None)
         }
       } else if (item.cmd) {
-        return new TestApi6Item('cmd', item.label, item.src, item.cmd, item.folder, item.childs, item.description || '', vscode.TreeItemCollapsibleState.None)
+        return new TestApi6Item('cmd', item.label, item.src, item.cmd, item.folder, item.childs, item.description ? `( ${item.description} )` : '', vscode.TreeItemCollapsibleState.None)
       }
-      return new TestApi6Item(item.context === 'root' ? 'root' : item.childs?.length ? 'folder' : 'file', item.label, item.src, item.cmd, item.folder, item.childs, item.description || '', item.childs?.length ? (element ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.Expanded) : vscode.TreeItemCollapsibleState.None)
+      return new TestApi6Item(item.context === 'root' ? 'root' : item.childs?.length ? 'folder' : 'file', item.label, item.src, item.cmd, item.folder, item.childs, item.description ? `( ${item.description} )` : '', item.childs?.length ? (element ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.Expanded) : vscode.TreeItemCollapsibleState.None)
     })
   }
 }
