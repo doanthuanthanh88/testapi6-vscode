@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.43",
+	"version": "1.1.44",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -30,7 +30,7 @@
 		"views": {
 			"debug": [
 				{
-					"id": "testApi6History",
+					"id": "testApi6HistoryDebug",
 					"name": "TestAPI6 History"
 				}
 			],
