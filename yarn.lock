@@ -1569,9 +1569,9 @@ table@^6.0.9:
     strip-ansi "^6.0.0"
 
 testapi6@^1.1.16:
-  version "1.1.38"
-  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.1.38.tgz#c03717cf5f8ebd285e6edb5a55c412ee01db1c7e"
-  integrity sha512-XkmJB+54SAuM+daEncdrC+nGeAEUsrzxS8hFpAsvW4olQjDWvav3QF6qYqOEsxx/DUnP3WgSy8Te4TjTkAO6Xw==
+  version "1.1.39"
+  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.1.39.tgz#ed9045de7eedbf0f3442cc1a89d5174e66739be5"
+  integrity sha512-Ox2RjiqryiV6LwHPIMEuwqfLlyTo2iuOIZja/XOxr8DZuDhlEspR1/beou5JLCUdV6PENKKf/KkfjEP7GWH2kA==
   dependencies:
     axios "^0.21.0"
     chai "^4.3.3"
