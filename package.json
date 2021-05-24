@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Test api then export to document base on yaml files",
-	"version": "1.1.47",
+	"version": "1.1.48",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -11,6 +11,7 @@
 		"Snippets"
 	],
 	"activationEvents": [
+		"onView:testApi6Profile",
 		"onView:testApi6Global",
 		"onView:testApi6Local",
 		"onView:testApi6History",
@@ -56,6 +57,10 @@
 					"name": "TestAPI6 In App"
 				},
 				{
+					"id": "testApi6Profile",
+					"name": "TestAPI6 Profile"
+				},
+				{
 					"id": "testApi6History",
 					"name": "TestAPI6 History"
 				},
@@ -92,10 +97,6 @@
 			},
 			{
 				"language": "javascript",
-				"path": "testapi6.snippet.seq.json"
-			},
-			{
-				"language": "jsx",
 				"path": "testapi6.snippet.seq.json"
 			},
 			{
@@ -175,6 +176,14 @@
 			{
 				"command": "testapi6.runinview",
 				"title": "Run"
+			},
+			{
+				"command": "testapi6.updateProfile",
+				"title": "Open profile"
+			},
+			{
+				"command": "testapi6.setProfile",
+				"title": "Apply/Ignore"
 			}
 		],
 		"menus": {
@@ -198,6 +207,10 @@
 				}
 			],
 			"view/title": [
+				{
+					"command": "testapi6.updateProfile",
+					"when": "view == testApi6Profile"
+				},
 				{
 					"command": "testapi6.refresh",
 					"when": "view == testApi6Global"
@@ -265,6 +278,11 @@
 					"command": "testapi6.openExample",
 					"when": "view == testApi6ExampleProvider && viewItem == file",
 					"group": "inline"
+				},
+				{
+					"command": "testapi6.setProfile",
+					"when": "view == testApi6Profile && viewItem == root",
+					"group": "inline"
 				}
 			]
 		}
@@ -310,7 +328,7 @@
 		"lodash": "^4.17.21",
 		"moment": "^2.29.1",
 		"node-fetch": "^2.6.1",
-		"testapi6": "^1.1.16"
+		"testapi6": "^1.1.40"
 	},
 	"publisher": "doanthuanthanh88",
 	"homepage": "https://github.com/doanthuanthanh88",

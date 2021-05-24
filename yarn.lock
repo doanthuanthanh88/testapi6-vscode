@@ -1568,10 +1568,10 @@ table@^6.0.9:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
 
-testapi6@^1.1.16:
-  version "1.1.39"
-  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.1.39.tgz#ed9045de7eedbf0f3442cc1a89d5174e66739be5"
-  integrity sha512-Ox2RjiqryiV6LwHPIMEuwqfLlyTo2iuOIZja/XOxr8DZuDhlEspR1/beou5JLCUdV6PENKKf/KkfjEP7GWH2kA==
+testapi6@^1.1.40:
+  version "1.1.40"
+  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.1.40.tgz#e36af039e7e7105463513a1739b368dd0181bed0"
+  integrity sha512-1bKc7+u2pY18Acb31DBzLGjEmi9PV3ipxiO7ueUXDMG80riNpZUkDhgyyY5GAG5QckSeWztqE2wWdO9o67D3NA==
   dependencies:
     axios "^0.21.0"
     chai "^4.3.3"

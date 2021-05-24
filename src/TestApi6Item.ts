@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 
 export class TestApi6Item extends vscode.TreeItem {
+  isPick?: boolean
+
   constructor(
     public context: 'root' | 'folder' | 'file' | 'cmd',
     public _label: string,
@@ -38,7 +40,7 @@ export class TestApi6Item extends vscode.TreeItem {
     } else {
       label = this._label
     }
-    return (this.context === 'cmd' ? '▶ ' : this.context === 'root' ? '' : this.context === 'file' ? 'ϟ  ' : this.context === 'folder' ? 'ϟ  ' : '') + label
+    return (!this.isPick ? '' : '✅ ') + (this.context === 'cmd' ? '▶ ' : this.context === 'root' ? '' : this.context === 'file' ? 'ϟ  ' : this.context === 'folder' ? 'ϟ  ' : '') + label
     // return dir.length > 0 ? a.replace(dir + '/', '') : a
   }
 

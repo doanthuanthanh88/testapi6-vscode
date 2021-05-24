@@ -7,6 +7,7 @@ import * as path from 'path';
 import { basename } from 'path';
 import { InputYamlFile, load } from 'testapi6/dist/main';
 import * as vscode from 'vscode';
+import { TestApi6ProfileProvider } from './TestApi6ProfileProvider';
 import { TestApi6ExampleProvider } from './TestApi6ExampleProvider';
 import { TestApi6GlobalProvider } from './TestApi6GlobalProvider';
 import { TestApi6HistoryProvider } from './TestApi6HistoryProvider';
@@ -117,6 +118,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const globalProvider = new TestApi6GlobalProvider()
 
   const localProvider = new TestApi6LocalProvider(vscode.workspace.workspaceFolders?.map(f => f.uri.toString().replace('file:', '')) || [])
+  const profileProvider = new TestApi6ProfileProvider()
   const historyProvider = new TestApi6HistoryProvider()
 
   vscode.window.onDidCloseTerminal(e => {
@@ -183,6 +185,8 @@ export async function activate(context: vscode.ExtensionContext) {
       if (basename(file) === '.yaml') {
         localProvider.refresh()
       } else {
+        profileProvider.load()
+        profileProvider.refresh()
         await yamlChange(file, true)
       }
     }
@@ -205,6 +209,7 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.window.registerTreeDataProvider('testApi6Global', globalProvider);
   vscode.window.registerTreeDataProvider('testApi6History', historyProvider);
   vscode.window.registerTreeDataProvider('testApi6Local', localProvider);
+  vscode.window.registerTreeDataProvider('testApi6Profile', profileProvider);
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.openExample', async (h: any) => {
     const content = await exampleProvider.getContent(h.des)
@@ -220,6 +225,16 @@ export async function activate(context: vscode.ExtensionContext) {
     await vscode.window.showTextDocument(a)
   }))
 
+  context.subscriptions.push(vscode.commands.registerCommand('testapi6.updateProfile', async () => {
+    profileProvider.newOne()
+    const a = await vscode.workspace.openTextDocument(vscode.Uri.parse("file:" + profileProvider.dataFile))
+    await vscode.window.showTextDocument(a)
+  }))
+
+  context.subscriptions.push(vscode.commands.registerCommand('testapi6.setProfile', async (h: any) => {
+    profileProvider.pick(h.label)
+  }))
+
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.del', (h: any) => {
     globalProvider.remove(h.src, h.folder)
   }))
@@ -232,23 +247,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.edit', async (h: any) => {
     let scenarioPath = h.src
-    const inp = vscode.window.createInputBox()
-    inp.value = h.labelText
-    inp.show()
-    let label = await new Promise<string>(r => {
-      let isAccepted: boolean
-      inp.onDidAccept(() => {
-        if (!isAccepted) {
-          inp.hide()
-          r(inp.value || '')
-        }
-      })
-      inp.onDidHide(() => {
-        isAccepted = true
-        inp.hide()
-        r(inp.value || '')
-      })
-    })
+    const label = await getInput('', h.labelText)
     if (label) globalProvider.upsert(label.trim(), scenarioPath, h.folder)
   }))
 
@@ -287,23 +286,7 @@ export async function activate(context: vscode.ExtensionContext) {
       const { scenarioFile = '', isClose = false } = getFileRun(scenarioPath, lastScenario)
       let decryptPassword = ''
       if (scenarioFile?.endsWith('.encrypt')) {
-        const inp = vscode.window.createInputBox()
-        inp.placeholder = 'Enter password to decrypt file'
-        inp.show()
-        decryptPassword = await new Promise(r => {
-          let isAccepted: boolean
-          inp.onDidAccept(() => {
-            if (!isAccepted) {
-              inp.hide()
-              r(inp.value || '')
-            }
-          })
-          inp.onDidHide(() => {
-            isAccepted = true
-            inp.hide()
-            r(inp.value || '')
-          })
-        })
+        decryptPassword = await getInput('Enter password to decrypt file', '')
       }
       const name = path.basename(scenarioFile)
 
@@ -326,7 +309,7 @@ export async function activate(context: vscode.ExtensionContext) {
       terObj.show(true)
       lastScenario = scenarioFile
       updateStatusBar(lastScenario)
-      terObj.sendText(`${nodeBin} ${scenarioFile} ${decryptPassword}`)
+      terObj.sendText(`${nodeBin} '${scenarioFile}' '${decryptPassword}' '${JSON.stringify(profileProvider.profile || {})}'`)
       if (isClose) {
         terObj?.sendText(`exit`, true)
       }
@@ -344,4 +327,26 @@ export async function activate(context: vscode.ExtensionContext) {
 // this method is called when your extension is deactivated
 export function deactivate() {
 
+}
+
+async function getInput(label: string, value: string) {
+  const inp = vscode.window.createInputBox()
+  if (label) inp.placeholder = label
+  inp.value = value
+  inp.show()
+  value = await new Promise<string>(r => {
+    let isAccepted: boolean
+    inp.onDidAccept(() => {
+      if (!isAccepted) {
+        inp.hide()
+        r(inp.value || '')
+      }
+    })
+    inp.onDidHide(() => {
+      isAccepted = true
+      inp.hide()
+      r(inp.value || '')
+    })
+  })
+  return value
 }
