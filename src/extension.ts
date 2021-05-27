@@ -232,7 +232,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.setProfile', async (h: any) => {
-    profileProvider.pick(h.label)
+    profileProvider.pick(h.cmd, h.src)
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.del', (h: any) => {
@@ -309,7 +309,7 @@ export async function activate(context: vscode.ExtensionContext) {
       terObj.show(true)
       lastScenario = scenarioFile
       updateStatusBar(lastScenario)
-      terObj.sendText(`${nodeBin} '${scenarioFile}' '${decryptPassword}' '${JSON.stringify(profileProvider.profile || {})}'`)
+      terObj.sendText(`${nodeBin} '${scenarioFile}' '${decryptPassword}' '${JSON.stringify(profileProvider.profileData || {})}'`)
       if (isClose) {
         terObj?.sendText(`exit`, true)
       }

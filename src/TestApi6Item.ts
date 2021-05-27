@@ -15,7 +15,7 @@ export class TestApi6Item extends vscode.TreeItem {
   ) {
     super('', collapsibleState);
     this.contextValue = context
-    this.tooltip = this.src || ''
+    // this.tooltip = this.src || ''
   }
 
   get labelText() {
