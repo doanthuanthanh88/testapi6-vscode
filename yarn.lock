@@ -1568,10 +1568,10 @@ table@^6.0.9:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
 
-testapi6@^1.1.40:
-  version "1.1.43"
-  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.1.43.tgz#2355d2d0c19aac0b41db6324945b34f62eb8dfc2"
-  integrity sha512-YnssR5F7uhKiwxlnb7deXhWwgkARYzfbHXsVsZtZHGJfP/plkTwEYrZDGRJVwu26k3GXXknW6q1nnYBa5RBd3w==
+testapi6@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.2.0.tgz#a3eaf250e134b969f6d182edfa0757aaa3abe733"
+  integrity sha512-s9MQ76UQzqkW4C2L9WtE6KeS2rEQjS7YrgTkK2v9yNuX3ERtp8uCwUn8DLMIgXssSzBIafNAibPSFONL5U4zpQ==
   dependencies:
     axios "^0.21.0"
     chai "^4.3.3"
@@ -1585,6 +1585,7 @@ testapi6@^1.1.40:
     pako "^1.0.11"
     prompts "^2.4.0"
     to-json-schema "^0.2.5"
+    typescript "^4.3.2"
 
 text-table@^0.2.0:
   version "0.2.0"
@@ -1675,7 +1676,7 @@ typed-rest-client@^1.8.4:
     tunnel "0.0.6"
     underscore "^1.12.1"
 
-typescript@^4.0.2:
+typescript@^4.0.2, typescript@^4.3.2:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.2.tgz#399ab18aac45802d6f2498de5054fcbbe716a805"
   integrity sha512-zZ4hShnmnoVnAHpVHWpTcxdv7dWP60S2FsydQLV8V5PbS3FifjWFFRiHSWpDJahly88PRyV5teTSLoq4eG7mKw==
