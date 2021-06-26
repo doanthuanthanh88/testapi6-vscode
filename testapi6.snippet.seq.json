@@ -1,128 +1,121 @@
 {
-  "Sequence message": {
-    "prefix": "@mes.seq",
+  "Sequence box": {
+    "prefix": "@com.box",
     "body": [
-      "$LINE_COMMENT - ${0}"
+      "$LINE_COMMENT/ BOX rgb(${1}, ${2}, ${0})"
     ],
-    "description": "Request to service self"
+    "description": "Wrap a box with color"
+  },
+  "Sequence comment": {
+    "prefix": "@com.seq",
+    "body": [
+      "$LINE_COMMENT/ ${0}"
+    ],
+    "description": "Do something in context"
   },
   "Sequence request": {
     "prefix": "@req.seq",
     "body": [
-      "$LINE_COMMENT - ${1:\\$this} => ${2}: ${0}"
+      "$LINE_COMMENT/ {${1}} => {${2}}: ${0}"
     ],
-    "description": "Request to service"
+    "description": "Request to a service"
   },
   "Sequence response": {
     "prefix": "@res.seq",
     "body": [
-      "$LINE_COMMENT - ${2:\\$this} <= ${1}: ${0}"
+      "$LINE_COMMENT/ {${1}} <= {${2}}: ${0}"
     ],
-    "description": "Response to service"
+    "description": "Response to another"
+  },
+  "Sequence throw error": {
+    "prefix": "@throw.seq",
+    "body": [
+      "$LINE_COMMENT/ {${1}} <x {${2}}: Throw { ${0} }"
+    ],
+    "description": "Throw error then stop"
+  },
+  "Sequence done": {
+    "prefix": "@done.seq",
+    "body": [
+      "$LINE_COMMENT/ {${1}} <x {${2}}: Response { ${0} }"
+    ],
+    "description": "Response then stop"
+  },
+  "Sequence return": {
+    "prefix": "@return.seq",
+    "body": [
+      "$LINE_COMMENT/ Return { ${0} }"
+    ],
+    "description": "Response then stop"
   },
   "Sequence publish": {
     "prefix": "@pub.seq",
     "body": [
-      "$LINE_COMMENT - ${1:\\$this} -> ${2}: ${0}"
+      "$LINE_COMMENT/ {${1}} -> {${2}}: ${0}"
     ],
     "description": "Publish message"
   },
   "Sequence subscribe": {
     "prefix": "@sub.seq",
     "body": [
-      "$LINE_COMMENT - ${2:\\$this} <- ${1}: ${0}"
+      "$LINE_COMMENT/ {${1}} <- {${2}}: ${0}"
     ],
-    "description": "Subscribe message"
+    "description": "Consume message"
   },
   "Sequence call next": {
-    "prefix": "@next.seq",
+    "prefix": "@call.seq",
     "body": [
-      "$LINE_COMMENT - ${1:\\$this} > ${2}: ${0}"
+      "$LINE_COMMENT/ {${1}} > {${2}}: ${0}"
     ],
-    "description": "Next step"
+    "description": "Call another function"
   },
   "Sequence call back": {
     "prefix": "@back.seq",
     "body": [
-      "$LINE_COMMENT - ${2:\\$this} < ${1}: ${0}"
+      "$LINE_COMMENT/ {${1}} < {${2}}: ${0}"
     ],
-    "description": "Back step"
-  },
-  "Sequence package": {
-    "prefix": "@pack.seq",
-    "body": [
-      "$LINE_COMMENT @ ${0}"
-    ],
-    "description": "Default package"
+    "description": "The function done"
   },
   "Sequence loop": {
     "prefix": "@loop.seq",
     "body": [
-      "$LINE_COMMENT + LOOP: ${0}"
+      "$LINE_COMMENT/ LOOP ${0}"
     ],
     "description": "LOOP"
-  },
-  "Sequence eloop": {
-    "prefix": "@eloop.seq",
-    "body": [
-      "$LINE_COMMENT + END_LOOP"
-    ],
-    "description": "END_LOOP"
   },
   "Sequence parallel": {
     "prefix": "@parallel.seq",
     "body": [
-      "$LINE_COMMENT + PARALLEL: ${0}"
+      "$LINE_COMMENT/ PARALLEL ${0}"
     ],
-    "description": "FOR"
-  },
-  "Sequence eparallel": {
-    "prefix": "@eparallel.seq",
-    "body": [
-      "$LINE_COMMENT + END_PARALLEL"
-    ],
-    "description": "END_PARALLEL"
+    "description": "For, loop something"
   },
   "Sequence if": {
     "prefix": "@if.seq",
     "body": [
-      "$LINE_COMMENT + IF: ${0}"
+      "$LINE_COMMENT/ IF ${0}"
     ],
-    "description": "IF"
-  },
-  "Sequence elseif": {
-    "prefix": "@elif.seq",
-    "body": [
-      "$LINE_COMMENT + ELSE_IF: ${0}"
-    ],
-    "description": "ELSE_IF"
+    "description": "If condition"
   },
   "Sequence else": {
     "prefix": "@else.seq",
     "body": [
-      "$LINE_COMMENT + ELSE"
+      "$LINE_COMMENT/ ELSE ${0}"
     ],
-    "description": "ELSE"
+    "description": "Else condition"
   },
-  "Sequence eif": {
-    "prefix": "@eif.seq",
-    "body": [
-      "$LINE_COMMENT + END_IF"
-    ],
-    "description": "END_IF"
-  },
-  "Sequence func": {
+  "Sequence declare func": {
     "prefix": "@func.seq",
     "body": [
-      "$LINE_COMMENT > ${0}"
+      "$LINE_COMMENT/ [${1:Function_Key}]${2:{Context\\}} ${0:description}"
     ],
     "description": "Declare a function"
   },
-  "Sequence call function": {
-    "prefix": "@call.seq",
+  "Sequence ref function": {
+    "prefix": "@ref.seq",
     "body": [
-      "$LINE_COMMENT < ${0}"
+      "$LINE_COMMENT/ [${1:Function_Key}] ${0:description}"
     ],
-    "description": "Call a function"
+    "description": "Reference a function"
   }
 }

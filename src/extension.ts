@@ -134,13 +134,13 @@ export async function activate(context: vscode.ExtensionContext) {
   playStatusBar.text = '▶ TestAPI6'
   playStatusBar.tooltip = 'Run testapi6'
   context.subscriptions.push(playStatusBar);
-
+  
   function updateStatusBar(file: string) {
     if (file && file.endsWith('.yaml')) {
+      lastScenario = file
+    }
+    if (lastScenario) {
       playStatusBar.show()
-      playStatusBar.text = `▶ ${basename(file)}`
-      playStatusBar.tooltip = `TestAPI6: ${file}`
-    } else if (lastScenario) {
       playStatusBar.text = `▶ ${basename(lastScenario)}`
       playStatusBar.tooltip = `TestAPI6: ${lastScenario}`
     } else {
@@ -161,7 +161,6 @@ export async function activate(context: vscode.ExtensionContext) {
         rootDocs.setup(),
         rootTemps.setup(),
         rootVars.setup(),
-        exampleProvider.load()
       ])
       await Promise.all([
         scenarioInspectProvider.load(rootScenario, 'scenario'),
@@ -210,6 +209,8 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.window.registerTreeDataProvider('testApi6History', historyProvider);
   vscode.window.registerTreeDataProvider('testApi6Local', localProvider);
   vscode.window.registerTreeDataProvider('testApi6Profile', profileProvider);
+
+  await exampleProvider.load()
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.openExample', async (h: any) => {
     const content = await exampleProvider.getContent(h.des)
