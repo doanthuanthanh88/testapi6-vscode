@@ -7,7 +7,7 @@
     "description": "Wrap a box with color"
   },
   "Sequence comment": {
-    "prefix": "@com.seq",
+    "prefix": "@do.seq",
     "body": [
       "$LINE_COMMENT/ ${0}"
     ],
@@ -16,63 +16,63 @@
   "Sequence request": {
     "prefix": "@req.seq",
     "body": [
-      "$LINE_COMMENT/ {${1}} => {${2}}: ${0}"
+      "$LINE_COMMENT/ {} => {${1}}: ${0}"
     ],
     "description": "Request to a service"
   },
   "Sequence response": {
     "prefix": "@res.seq",
     "body": [
-      "$LINE_COMMENT/ {${1}} <= {${2}}: ${0}"
+      "$LINE_COMMENT/ {} <= {${1}}: Return ${0}"
     ],
     "description": "Response to another"
   },
   "Sequence throw error": {
     "prefix": "@throw.seq",
     "body": [
-      "$LINE_COMMENT/ {${1}} <x {${2}}: Throw { ${0} }"
+      "$LINE_COMMENT/ {${1:Client}} <x {}: Throw 400 - { ${0} }"
     ],
     "description": "Throw error then stop"
   },
   "Sequence done": {
     "prefix": "@done.seq",
     "body": [
-      "$LINE_COMMENT/ {${1}} <x {${2}}: Response { ${0} }"
+      "$LINE_COMMENT/ {${1:Client}} <x {}: Response 200 - { ${0} }"
     ],
     "description": "Response then stop"
   },
   "Sequence return": {
     "prefix": "@return.seq",
     "body": [
-      "$LINE_COMMENT/ Return { ${0} }"
+      "$LINE_COMMENT/ Got { ${0} }"
     ],
-    "description": "Response then stop"
+    "description": "Return value in the function"
   },
   "Sequence publish": {
     "prefix": "@pub.seq",
     "body": [
-      "$LINE_COMMENT/ {${1}} -> {${2}}: ${0}"
+      "$LINE_COMMENT/ {} -> (${1}): Publish a message to \"${0}\""
     ],
     "description": "Publish message"
   },
   "Sequence subscribe": {
     "prefix": "@sub.seq",
     "body": [
-      "$LINE_COMMENT/ {${1}} <- {${2}}: ${0}"
+      "$LINE_COMMENT/ {} <- (${1}): Consume a message from \"${0}\""
     ],
     "description": "Consume message"
   },
   "Sequence call next": {
     "prefix": "@call.seq",
     "body": [
-      "$LINE_COMMENT/ {${1}} > {${2}}: ${0}"
+      "$LINE_COMMENT/ {} > ${1}: ${0}"
     ],
     "description": "Call another function"
   },
   "Sequence call back": {
     "prefix": "@back.seq",
     "body": [
-      "$LINE_COMMENT/ {${1}} < {${2}}: ${0}"
+      "$LINE_COMMENT/ {} < ${1}: Return ${0}"
     ],
     "description": "The function done"
   },
@@ -107,7 +107,7 @@
   "Sequence declare func": {
     "prefix": "@func.seq",
     "body": [
-      "$LINE_COMMENT/ [${1:Function_Key}]${2:{Context\\}} ${0:description}"
+      "$LINE_COMMENT/ [${1:Function_key_OR_Empty_to_startup}]${2:{Context\\}} ${0:description}"
     ],
     "description": "Declare a function"
   },
