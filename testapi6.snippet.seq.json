@@ -6,8 +6,22 @@
     ],
     "description": "Wrap a box with color"
   },
+  "Sequence model": {
+    "prefix": "@model.seq",
+    "body": [
+      "$LINE_COMMENT/ <${1:Model name}> ${0:Description}"
+    ],
+    "description": "Create model"
+  },
+  "Sequence model.attribute": {
+    "prefix": "@attr.model.seq",
+    "body": [
+      "$LINE_COMMENT/ ${1:Field name} ${2:Data type}: ${0: Description}"
+    ],
+    "description": "Create model attributes"
+  },
   "Sequence comment": {
-    "prefix": "@do.seq",
+    "prefix": "@todo.seq",
     "body": [
       "$LINE_COMMENT/ ${0}"
     ],

@@ -134,7 +134,7 @@ export async function activate(context: vscode.ExtensionContext) {
   playStatusBar.text = '▶ TestAPI6'
   playStatusBar.tooltip = 'Run testapi6'
   context.subscriptions.push(playStatusBar);
-  
+
   function updateStatusBar(file: string) {
     if (file && file.endsWith('.yaml')) {
       lastScenario = file
