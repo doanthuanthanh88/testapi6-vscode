@@ -2142,9 +2142,9 @@ tar-stream@^2.0.0:
     readable-stream "^3.1.1"
 
 testapi6@^1.2.0:
-  version "1.2.19"
-  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.2.19.tgz#987d775c09259db9c73f6d9b8bda89b81ef17428"
-  integrity sha512-/5+ZkHfIDT2KAjDwk1SZywUiNV6P0uWRJdRNNFTcZ0fb1Ll0JxHdS3qcOoeR6659qFU1FMtzbFv/sARvwGG67g==
+  version "1.2.20"
+  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.2.20.tgz#610b0f85c4daa2de6c694c16087198efa5a7ec40"
+  integrity sha512-MIuLW+k4uuncx3YbRMx1FByd1SgUYgdnxRSAxOldPI9rrs4hYErivvI/yUmFKK+Pb9UgwP/nzYtW1WgcoONgpA==
   dependencies:
     "@mermaid-js/mermaid-cli" "^8.11.0"
     axios "^0.21.0"
