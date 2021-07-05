@@ -1,23 +1,23 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+import axios from 'axios';
 import { existsSync, readFileSync } from 'fs';
 import { cloneDeep } from 'lodash';
-import fetch from 'node-fetch';
 import * as path from 'path';
 import { basename } from 'path';
 import { InputYamlFile, load } from 'testapi6/dist/main';
 import * as vscode from 'vscode';
-import { TestApi6ProfileProvider } from './TestApi6ProfileProvider';
 import { TestApi6ExampleProvider } from './TestApi6ExampleProvider';
 import { TestApi6GlobalProvider } from './TestApi6GlobalProvider';
 import { TestApi6HistoryProvider } from './TestApi6HistoryProvider';
 import { TestApi6InspectProvider } from './TestApi6InspectProvider';
 import { TestApi6Item } from './TestApi6Item';
 import { TestApi6LocalProvider } from './TestApi6LocalProvider';
+import { TestApi6ProfileProvider } from './TestApi6ProfileProvider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-let ter = new Map<string, vscode.Terminal>()
+const ter = new Map<string, vscode.Terminal>()
 const nodeBin = path.join(require.resolve('testapi6'), '..', '..', 'bin/index.js')
 let lastScenario: string
 let playStatusBar: vscode.StatusBarItem;
@@ -26,14 +26,11 @@ let debugLog: vscode.OutputChannel
 async function setConfig() {
   try {
     // Setting yaml config
-    const res = await fetch('https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/.vscode/settings.json', {
-      method: 'GET'
-    })
-    const tmp = await res.text()
+    const { data } = await axios.get('https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/.vscode/settings.json')
     let yamlConfig = {} as any
     try {
       // eslint-disable-next-line
-      eval(`yamlConfig = ${tmp || '{}'}`)
+      eval(`yamlConfig = ${data || '{}'}`)
     } catch (err) {
       vscode.window.showErrorMessage(err.message)
       debugLog.appendLine('')

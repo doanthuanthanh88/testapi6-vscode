@@ -1,4 +1,5 @@
-import { Method, Templates } from 'testapi6/dist/components';
+import { Templates } from 'testapi6/dist/components/Templates';
+import { Method } from 'testapi6/dist/components/api/Api';
 import { context } from 'testapi6/dist/Context';
 import 'testapi6/dist/init';
 import * as vscode from 'vscode';

@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Dev tools base on yaml files",
-	"version": "1.2.15",
+	"version": "1.2.16",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -323,11 +323,11 @@
 		"url": "git@github.com:doanthuanthanh88/testapi6-vscode.git"
 	},
 	"dependencies": {
+		"axios": "^0.21.1",
 		"chalk": "^4.1.0",
 		"js-yaml": "^4.0.0",
 		"lodash": "^4.17.21",
 		"moment": "^2.29.1",
-		"node-fetch": "^2.6.1",
 		"testapi6": "^1.2.0"
 	},
 	"publisher": "doanthuanthanh88",
