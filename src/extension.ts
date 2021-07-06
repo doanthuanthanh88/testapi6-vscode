@@ -79,7 +79,7 @@ function getLine(lines: string[], i: number) {
 function getFileRun(scenarioPath: string, lastScenario: string) {
   let isClose = false
   let _lastScenario = lastScenario
-  if (!scenarioPath?.endsWith('.yaml') && !scenarioPath?.endsWith('.yml') && !scenarioPath?.endsWith('.encrypt')) {
+  if ((scenarioPath && scenarioPath.includes(' ')) || !scenarioPath?.endsWith('.yaml') && !scenarioPath?.endsWith('.yml') && !scenarioPath?.endsWith('.encrypt')) {
     if (!_lastScenario) return {}
     scenarioPath = _lastScenario
   } else {
@@ -104,7 +104,6 @@ export async function activate(context: vscode.ExtensionContext) {
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "testapi6" is now active!');
 
-  let isSetConfig: boolean
   debugLog = vscode.window.createOutputChannel('TestAPI6')
   debugLog.show(false)
   const scenarioInspectProvider = new TestApi6InspectProvider()
@@ -131,6 +130,8 @@ export async function activate(context: vscode.ExtensionContext) {
   playStatusBar.text = '▶ TestAPI6'
   playStatusBar.tooltip = 'Run testapi6'
   context.subscriptions.push(playStatusBar);
+
+  setConfig()
 
   function updateStatusBar(file: string) {
     if (file && file.endsWith('.yaml')) {
@@ -277,8 +278,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.run', async (h: any) => {
     debugLog.clear()
-    if (!isSetConfig) await setConfig()
-    isSetConfig = true
     try {
       let scenarioPath = h instanceof TestApi6Item ? h.src : ((h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath)
       const { scenarioFile = '', isClose = false } = getFileRun(scenarioPath, lastScenario)
