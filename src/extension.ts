@@ -113,7 +113,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const exampleProvider = new TestApi6ExampleProvider()
   const globalProvider = new TestApi6GlobalProvider()
 
-  const localProvider = new TestApi6LocalProvider(vscode.workspace.workspaceFolders?.map(f => f.uri.toString().replace('file:', '')) || [])
+  const localProvider = new TestApi6LocalProvider(vscode.workspace.workspaceFolders?.map(f => f.uri.toString().replace(/^file:\/\//, '')) || [])
   const profileProvider = new TestApi6ProfileProvider()
   const historyProvider = new TestApi6HistoryProvider()
 
