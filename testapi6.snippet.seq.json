@@ -23,9 +23,16 @@
   "Sequence comment": {
     "prefix": "@todo.seq",
     "body": [
-      "$LINE_COMMENT/ ${0}"
+      "$LINE_COMMENT/ NOTE RIGHT OF ${1}: ${0}"
     ],
-    "description": "Do something in context"
+    "description": "Note"
+  },
+  "Sequence group": {
+    "prefix": "@group.seq",
+    "body": [
+      "$LINE_COMMENT/ GROUP ${0}"
+    ],
+    "description": "Request to a service"
   },
   "Sequence request": {
     "prefix": "@req.seq",
