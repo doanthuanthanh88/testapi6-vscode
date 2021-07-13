@@ -1797,9 +1797,9 @@ tar-stream@^2.0.0:
     readable-stream "^3.1.1"
 
 testapi6@^1.2.0:
-  version "1.2.33"
-  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.2.33.tgz#9152407ce849e56b961db0134f629932e7f75c50"
-  integrity sha512-53jU/A8lsgoNs+wKjEpuDP8r1uloP8aTYKveGaQbh2PydjU6FN553wrA/bqaWsB3wDl1+WoYryTCoTwSd1PcNA==
+  version "1.2.34"
+  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.2.34.tgz#86f5abebf237cd69e620f846eafb0d3b372e1fcd"
+  integrity sha512-xQqo+OtTDu+OieN+lUoW7KCGFoc1KLXPEafIWhWCP/lRoeQKeBVzEawa4Rt3OEE0fFO/tx5YIRCHRbr4XWsH0w==
   dependencies:
     axios "^0.21.0"
     chai "^4.3.3"
