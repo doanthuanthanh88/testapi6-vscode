@@ -45,7 +45,7 @@ async function setConfig() {
         "https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/schema.json": "*.yaml"
       }, vscode.ConfigurationTarget.Workspace)
     } catch (err) {
-      vscode.window.showWarningMessage('Please install YAML Language support first')
+      debugLog.appendLine('You should install YAML Language support')
       debugLog.appendLine('')
       debugLog.appendLine(err.message)
       debugLog.appendLine(err.stack)
