@@ -9,7 +9,14 @@
   "Sequence model": {
     "prefix": "@model.seq",
     "body": [
-      "$LINE_COMMENT/ <${1:Model name}> ${0:Description}"
+      "$LINE_COMMENT/ <${1:Model name}> ${2:Model type}: ${0:Description}"
+    ],
+    "description": "Create model"
+  },
+  "Sequence model extends": {
+    "prefix": "@model.extends.seq",
+    "body": [
+      "$LINE_COMMENT/ <${1:Model name}~${2:Inherit}> ${3:Model type}: ${0:Description}"
     ],
     "description": "Create model"
   },

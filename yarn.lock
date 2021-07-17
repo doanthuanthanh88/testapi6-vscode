@@ -102,9 +102,9 @@
     form-data "^3.0.0"
 
 "@types/node@*":
-  version "16.3.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.3.1.tgz#24691fa2b0c3ec8c0d34bfcfd495edac5593ebb4"
-  integrity sha512-N87VuQi7HEeRJkhzovao/JviiqKjDKMVKxKMfUvSKw+MbkbW8R0nA3fi/MQhhlxV2fQ+2ReM+/Nt4efdrJx3zA==
+  version "16.3.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.3.3.tgz#0c30adff37bbbc7a50eb9b58fae2a504d0d88038"
+  integrity sha512-8h7k1YgQKxKXWckzFCMfsIwn0Y61UK6tlD6y2lOb3hTOIMlK3t9/QwHOhc81TwU+RMf0As5fj7NPjroERCnejQ==
 
 "@types/node@^14.14.6":
   version "14.17.5"
@@ -112,9 +112,9 @@
   integrity sha512-bjqH2cX/O33jXT/UmReo2pM7DIJREPMnarixbQ57DOOzzFaI6D2+IcwaJQaJpv0M1E9TIhPCYVxrkcityLjlqA==
 
 "@types/vscode@^1.50.0":
-  version "1.58.0"
-  resolved "https://registry.yarnpkg.com/@types/vscode/-/vscode-1.58.0.tgz#91662aa27197c750df314e0d27de4b23512ebe59"
-  integrity sha512-enznxcBi4uYt20LWal09E0+VKEHZlq9PZawTu/mpWCVCFWWbiyR8HNI1ikBP1Ypqv8b3A/0md3DY1jcx+oQ8kQ==
+  version "1.58.1"
+  resolved "https://registry.yarnpkg.com/@types/vscode/-/vscode-1.58.1.tgz#7deae08792adc73fa57383244a0c79d3530df4f7"
+  integrity sha512-sa76rDXiSif09he8KoaWWUQxsuBr2+uND0xn1GUbEODkuEjp2p7Rqd3t5qlvklfmAedLFdL7MdnsPa57uzwcOw==
 
 "@types/yauzl@^2.9.1":
   version "2.9.2"
@@ -220,9 +220,9 @@ ajv@^6.10.0, ajv@^6.12.4:
     uri-js "^4.2.2"
 
 ajv@^8.0.1:
-  version "8.6.1"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.6.1.tgz#ae65764bf1edde8cd861281cda5057852364a295"
-  integrity sha512-42VLtQUOLefAvKFAQIxIZDaThq6om/PrfP0CYk3/vn+y4BMNkKnbli8ON2QCiHov4KkzOSJ/xSoBJdayiiYvVQ==
+  version "8.6.2"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.6.2.tgz#2fb45e0e5fcbc0813326c1c3da535d1881bb0571"
+  integrity sha512-9807RlWAgT564wT+DjeyU5OFMPjmzxVobvDFmNAhY+5zD6A2ly3jDp6sgnfyDtlIQ+7H97oc/DGCzzfu9rjw9w==
   dependencies:
     fast-deep-equal "^3.1.1"
     json-schema-traverse "^1.0.0"
@@ -1797,9 +1797,9 @@ tar-stream@^2.0.0:
     readable-stream "^3.1.1"
 
 testapi6@^1.2.0:
-  version "1.2.34"
-  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.2.34.tgz#86f5abebf237cd69e620f846eafb0d3b372e1fcd"
-  integrity sha512-xQqo+OtTDu+OieN+lUoW7KCGFoc1KLXPEafIWhWCP/lRoeQKeBVzEawa4Rt3OEE0fFO/tx5YIRCHRbr4XWsH0w==
+  version "1.2.39"
+  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.2.39.tgz#b56cae80b40b18c0117624afd2af345140219544"
+  integrity sha512-ptzXQJrDTLeKp/ce0Os+YWDBsGj8EVeMRVw0UMYSDNJImZKdH9aOQiZvpdiW1GSNDQ3AzB7Ty6fX3fdZCrjOuA==
   dependencies:
     axios "^0.21.0"
     chai "^4.3.3"
@@ -1814,8 +1814,9 @@ testapi6@^1.2.0:
     mkdirp "^1.0.4"
     pako "^1.0.11"
     prompts "^2.4.0"
-    puppeteer "^10.1.0"
     to-json-schema "^0.2.5"
+  optionalDependencies:
+    puppeteer "^10.1.0"
 
 text-table@^0.2.0:
   version "0.2.0"
@@ -1994,9 +1995,9 @@ vsce@^1.87.0:
     yazl "^2.2.2"
 
 vscode-test@^1.4.0:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/vscode-test/-/vscode-test-1.5.2.tgz#d9ec3cab1815afae1d7d81923e3c685d13d32303"
-  integrity sha512-x9PVfKxF6EInH9iSFGQi0V8H5zIW1fC7RAer6yNQR6sy3WyOwlWkuT3I+wf75xW/cO53hxMi1aj/EvqQfDFOAg==
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/vscode-test/-/vscode-test-1.6.1.tgz#44254c67036de92b00fdd72f6ace5f1854e1a563"
+  integrity sha512-086q88T2ca1k95mUzffvbzb7esqQNvJgiwY4h29ukPhFo8u+vXOOmelUoU5EQUHs3Of8+JuQ3oGdbVCqaxuTXA==
   dependencies:
     http-proxy-agent "^4.0.1"
     https-proxy-agent "^5.0.0"
