@@ -1,10 +1,10 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import axios from 'axios';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { cloneDeep } from 'lodash';
 import * as path from 'path';
-import { basename } from 'path';
+import { basename, join } from 'path';
 import { InputYamlFile, load } from 'testapi6/dist/main';
 import * as vscode from 'vscode';
 import { TestApi6ExampleProvider } from './TestApi6ExampleProvider';
@@ -18,7 +18,7 @@ import { TestApi6ProfileProvider } from './TestApi6ProfileProvider';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 const ter = new Map<string, vscode.Terminal>()
-const nodeBin = path.join(require.resolve('testapi6'), '..', '..', 'bin/index.js')
+const nodeBin = path.join(require.resolve('testapi6'), '..', '..', 'bin/testapi6.js')
 let lastScenario: string
 let playStatusBar: vscode.StatusBarItem;
 let debugLog: vscode.OutputChannel
@@ -131,8 +131,6 @@ export async function activate(context: vscode.ExtensionContext) {
   playStatusBar.tooltip = 'Run testapi6'
   context.subscriptions.push(playStatusBar);
 
-  setConfig()
-
   function updateStatusBar(file: string) {
     if (file && file.endsWith('.yaml')) {
       lastScenario = file
@@ -198,17 +196,19 @@ export async function activate(context: vscode.ExtensionContext) {
 
   updateStatusBar(lastScenario)
 
-  vscode.window.registerTreeDataProvider('testApi6ScenarioInspect', scenarioInspectProvider);
-  vscode.window.registerTreeDataProvider('testApi6TemplatesInspect', templateInspectProvider);
-  vscode.window.registerTreeDataProvider('testApi6VarsInspect', varsInspectProvider);
-  vscode.window.registerTreeDataProvider('testApi6DocsInspect', docsInspectProvider);
-  vscode.window.registerTreeDataProvider('testApi6ExampleProvider', exampleProvider);
-  vscode.window.registerTreeDataProvider('testApi6Global', globalProvider);
-  vscode.window.registerTreeDataProvider('testApi6History', historyProvider);
-  vscode.window.registerTreeDataProvider('testApi6Local', localProvider);
-  vscode.window.registerTreeDataProvider('testApi6Profile', profileProvider);
-
-  await exampleProvider.load()
+  setTimeout(() => {
+    setConfig()
+    vscode.window.registerTreeDataProvider('testApi6ScenarioInspect', scenarioInspectProvider);
+    vscode.window.registerTreeDataProvider('testApi6TemplatesInspect', templateInspectProvider);
+    vscode.window.registerTreeDataProvider('testApi6VarsInspect', varsInspectProvider);
+    vscode.window.registerTreeDataProvider('testApi6DocsInspect', docsInspectProvider);
+    vscode.window.registerTreeDataProvider('testApi6ExampleProvider', exampleProvider);
+    vscode.window.registerTreeDataProvider('testApi6Global', globalProvider);
+    vscode.window.registerTreeDataProvider('testApi6History', historyProvider);
+    vscode.window.registerTreeDataProvider('testApi6Local', localProvider);
+    vscode.window.registerTreeDataProvider('testApi6Profile', profileProvider);
+    exampleProvider.load()
+  })
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.openExample', async (h: any) => {
     const content = await exampleProvider.getContent(h.des)
@@ -264,7 +264,7 @@ export async function activate(context: vscode.ExtensionContext) {
         ter.set(terName, terObj);
       }
       (h.cmd as string[]).map(e => e.trim()).filter(e => e).forEach(cmd => terObj?.sendText(cmd))
-      terObj.show(true)
+      terObj.show(false)
     }
   }))
 
@@ -276,6 +276,62 @@ export async function activate(context: vscode.ExtensionContext) {
     })
   }))
 
+  let cachedInApp: any
+  context.subscriptions.push(vscode.commands.registerCommand('testapi6.runInApp', async (h: any) => {
+    const rs = [] as any[]
+    let i = 1
+    for (const group in localProvider.list) {
+      rs.push({ label: '', description: group.toUpperCase() })
+      localProvider.list[group].forEach((data: any) => {
+        const { folder, label, src, description, cmd } = data
+        rs.push({ label: `   ├ ${i++}. ${label}`, description, src, folder, cmd })
+      })
+    }
+    rs.push({ label: '', description: 'Configuration...', help: true })
+    if (rs.length > 0) {
+      // if (cachedInApp) {
+      //   const pick = rs.find(e => e.label === cachedInApp.label) as any
+      //   if (pick) pick.picked = true
+      // }
+      let vl = await vscode.window.showQuickPick(rs, {
+        canPickMany: false,
+        placeHolder: cachedInApp?.label || 'Search'
+      }) as any
+      if (vl) {
+        if (!vl['folder'] && !vl['help']) {
+          if (cachedInApp) {
+            vl = rs.find(e => e.label === cachedInApp.label)
+          }
+        }
+        if (vl['folder']) {
+          vscode.commands.executeCommand('testapi6.runinview', vl)
+          cachedInApp = vl
+        } else if (vl['help']) {
+          const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : ''
+          if (workspaceFolder) {
+            const yamlFile = join(workspaceFolder, '.yaml')
+            if (existsSync(yamlFile)) {
+              vscode.commands.executeCommand('vscode.open', vscode.Uri.file(yamlFile));
+            }
+          }
+        }
+      } else {
+        cachedInApp = undefined
+      }
+    } else {
+      const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : ''
+      if (workspaceFolder) {
+        const yamlFile = join(workspaceFolder, '.yaml')
+        if (!existsSync(yamlFile)) {
+          writeFileSync(yamlFile, `
+- Say Hello:
+  - Hello world: echo "Hello world"
+`)
+          vscode.commands.executeCommand('vscode.open', vscode.Uri.file(yamlFile));
+        }
+      }
+    }
+  }))
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.run', async (h: any) => {
     debugLog.clear()
     try {
@@ -306,7 +362,7 @@ export async function activate(context: vscode.ExtensionContext) {
       terObj.show(true)
       lastScenario = scenarioFile
       updateStatusBar(lastScenario)
-      terObj.sendText(`${nodeBin} '${scenarioFile}' '${decryptPassword}' '${JSON.stringify(profileProvider.profileData || {})}'`)
+      terObj.sendText(`${nodeBin} -e '${JSON.stringify(profileProvider.profileData || {})}' '${scenarioFile}' '${decryptPassword}'`)
       if (isClose) {
         terObj?.sendText(`exit`, true)
       }

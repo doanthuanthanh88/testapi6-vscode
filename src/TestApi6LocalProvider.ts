@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { TestApi6Item } from './TestApi6Item';
 
 export class TestApi6LocalProvider implements vscode.TreeDataProvider<TestApi6Item> {
-  private list = {} as any
+  list = {} as any
 
   constructor(public dataFiles: string[] = []) {
     this.init()

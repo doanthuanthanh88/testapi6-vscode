@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Dev tools base on yaml files",
-	"version": "1.2.28",
+	"version": "1.2.29",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -140,9 +140,18 @@
 			{
 				"command": "testapi6.run",
 				"key": "alt+cmd+t"
+			},
+			{
+				"command": "testapi6.runInApp",
+				"key": "alt+p"
 			}
 		],
 		"commands": [
+			{
+				"command": "testapi6.runInApp",
+				"category": "testapi6",
+				"title": "Run In App"
+			},
 			{
 				"command": "testapi6.run",
 				"category": "testapi6",
