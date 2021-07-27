@@ -281,10 +281,10 @@ export async function activate(context: vscode.ExtensionContext) {
     const rs = [] as any[]
     let i = 1
     for (const group in localProvider.list) {
-      rs.push({ label: '', description: group.toUpperCase() })
+      rs.push({ label: '', description: group.toUpperCase(), get _label() { return this.label?.replace(/^[^\d]*\d\.\s*/g, '') } })
       localProvider.list[group].forEach((data: any) => {
         const { folder, label, src, description, cmd } = data
-        rs.push({ label: `   ├ ${i++}. ${label}`, description, src, folder, cmd })
+        rs.push({ label: `   ├ ${i++}. ${label}`, description, src, folder, cmd, get _label() { return this.label?.replace(/^[^\d]*\d\.\s*/g, '') } })
       })
     }
     rs.push({ label: '', description: 'Configuration...', help: true })
