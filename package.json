@@ -2,7 +2,7 @@
 	"name": "testapi6",
 	"displayName": "testapi6",
 	"description": "Dev tools base on yaml files",
-	"version": "1.2.33",
+	"version": "1.2.34",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -327,6 +327,7 @@
 		"vsce": "^1.87.0",
 		"vscode-test": "^1.4.0"
 	},
+	"readme": "https://github.com/doanthuanthanh88/testapi6",
 	"repository": {
 		"type": "git",
 		"url": "git@github.com:doanthuanthanh88/testapi6-vscode.git"
@@ -338,6 +339,9 @@
 		"lodash": "^4.17.21",
 		"moment": "^2.29.1",
 		"testapi6": "^1.2.0"
+	},
+	"optionalDependencies": {
+		"puppeteer": "^10.1.0"
 	},
 	"publisher": "doanthuanthanh88",
 	"homepage": "https://github.com/doanthuanthanh88",
