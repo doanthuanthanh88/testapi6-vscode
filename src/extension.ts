@@ -247,7 +247,9 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.edit', async (h: any) => {
     let scenarioPath = h.src
     const label = await getInput('', h.labelText)
-    if (label) globalProvider.upsert(label.trim(), scenarioPath, h.folder)
+    if (label) {
+      globalProvider.upsert(label.trim(), scenarioPath, h.folder)
+    }
   }))
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.runinview', async (h: any) => {
@@ -384,7 +386,9 @@ export function deactivate() {
 
 async function getInput(label: string, value: string) {
   const inp = vscode.window.createInputBox()
-  if (label) inp.placeholder = label
+  if (label) {
+    inp.placeholder = label
+  }
   inp.value = value
   inp.show()
   value = await new Promise<string>(r => {
