@@ -18,7 +18,7 @@ import { TestApi6ProfileProvider } from './TestApi6ProfileProvider';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 const ter = new Map<string, vscode.Terminal>()
-const nodeBin = path.join(require.resolve('testapi6'), '..', '..', 'bin/testapi6.js')
+let nodeBin = path.join(require.resolve('testapi6'), '..', '..', 'bin/testapi6.js')
 let lastScenario: string
 let playStatusBar: vscode.StatusBarItem;
 let debugLog: vscode.OutputChannel
@@ -39,11 +39,20 @@ async function setConfig() {
       debugLog.show(true)
     }
     try {
-      const conf = vscode.workspace.getConfiguration()
-      await conf.update('yaml.customTags', yamlConfig['yaml.customTags'], vscode.ConfigurationTarget.Workspace)
-      await conf.update('yaml.schemas', {
-        "https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/schema.json": "*.yaml"
-      }, vscode.ConfigurationTarget.Workspace)
+      let conf = vscode.workspace.getConfiguration('testapi6')
+      const useGlobal = conf.get('useGlobal')
+      if (useGlobal === undefined) {
+        await conf.update('useGlobal', false, vscode.ConfigurationTarget.Global)
+      } else if (useGlobal === true) {
+        nodeBin = 'testapi6'
+      }
+      conf = vscode.workspace.getConfiguration('yaml')
+      if (conf && conf.has('customTags')) {
+        await conf.update('customTags', yamlConfig['yaml.customTags'], vscode.ConfigurationTarget.Workspace)
+        await conf.update('schemas', {
+          "https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/schema.json": "*.yaml"
+        }, vscode.ConfigurationTarget.Workspace)
+      }
     } catch (err) {
       debugLog.appendLine('You should install YAML Language support')
       debugLog.appendLine('')
@@ -312,9 +321,12 @@ export async function activate(context: vscode.ExtensionContext) {
           const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : ''
           if (workspaceFolder) {
             const yamlFile = join(workspaceFolder, '.yaml')
-            if (existsSync(yamlFile)) {
-              vscode.commands.executeCommand('vscode.open', vscode.Uri.file(yamlFile));
+            if (!existsSync(yamlFile)) {
+              writeFileSync(yamlFile, `- Dev:
+  - SayHello: echo "Hello testapi6"
+`)
             }
+            vscode.commands.executeCommand('vscode.open', vscode.Uri.file(yamlFile));
           }
         }
       } else {
@@ -364,7 +376,15 @@ export async function activate(context: vscode.ExtensionContext) {
       terObj.show(true)
       lastScenario = scenarioFile
       updateStatusBar(lastScenario)
-      terObj.sendText(`${nodeBin} -e '${JSON.stringify(profileProvider.profileData || {})}' '${scenarioFile}' '${decryptPassword}'`)
+      const cmd = [nodeBin]
+      if (profileProvider.profileData && Object.keys(profileProvider.profileData).length > 0) {
+        cmd.push('-e', `'${JSON.stringify(profileProvider.profileData)}'`)
+      }
+      cmd.push(scenarioFile)
+      if (decryptPassword) {
+        cmd.push(`'${decryptPassword}'`)
+      }
+      terObj.sendText(cmd.join(' '))
       if (isClose) {
         terObj?.sendText(`exit`, true)
       }
