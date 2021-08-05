@@ -102,14 +102,14 @@
     form-data "^3.0.0"
 
 "@types/node@*":
-  version "16.4.11"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.4.11.tgz#245030af802c776c31f00eb0cdde40ee615db462"
-  integrity sha512-nWSFUbuNiPKJEe1IViuodSI+9cM+vpM8SWF/O6dJK7wmGRNq55U7XavJHrlRrPkSMuUZUFzg1xaZ1B+ZZCrRWw==
+  version "16.4.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.4.12.tgz#961e3091f263e6345d2d84afab4e047a60b4b11b"
+  integrity sha512-zxrTNFl9Z8boMJXs6ieqZP0wAhvkdzmHSxTlJabM16cf5G9xBc1uPRH5Bbv2omEDDiM8MzTfqTJXBf0Ba4xFWA==
 
 "@types/node@^14.14.6":
-  version "14.17.8"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.8.tgz#813b73ab7d82ac06ddfd2458b13c88459a3b319f"
-  integrity sha512-0CHLt50GbUmH/6MrlBIKNdWCglvlyQKkorRf08/0DIi0ryuTPP+ijWLSI19SbDTHSKaagGDELiImY4BSikt61w==
+  version "14.17.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.9.tgz#b97c057e6138adb7b720df2bd0264b03c9f504fd"
+  integrity sha512-CMjgRNsks27IDwI785YMY0KLt3co/c0cQ5foxHYv/shC2w8oOnVwz5Ubq1QG5KzrcW+AXk6gzdnxIkDnTvzu3g==
 
 "@types/vscode@^1.50.0":
   version "1.58.1"
@@ -1780,9 +1780,9 @@ tar-stream@^2.0.0:
     readable-stream "^3.1.1"
 
 testapi6@^1.2.51:
-  version "1.2.51"
-  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.2.51.tgz#101c9d150a97ba14998dbef8fa7fa8f5d986c752"
-  integrity sha512-psoPQQoB+qiBy/7LVN/dz2WXN3LP1Klt4R3AneM66DSChBp+6weqQk/NAdBtCTp4ecmIGuxWukS4IpF52UQc+Q==
+  version "1.2.52"
+  resolved "https://registry.yarnpkg.com/testapi6/-/testapi6-1.2.52.tgz#756fbd9fc90bb6b47b73d1a0ed1efffa509ae61e"
+  integrity sha512-EZ4bAk4Oqy3hKUuDTBOaPbwM8YQgz6vYDZHuYKVGzPdBh3QQ9sPzfXvXCrNzX+BN2ov9xGPDqCNfulNcrcuTLg==
   dependencies:
     axios "^0.21.0"
     chai "^4.3.3"

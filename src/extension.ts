@@ -3,8 +3,9 @@
 import axios from 'axios';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { cloneDeep } from 'lodash';
+import { tmpdir } from 'os';
 import * as path from 'path';
-import { basename, join } from 'path';
+import { basename, extname, join } from 'path';
 import { InputYamlFile, load } from 'testapi6/dist/main';
 import * as vscode from 'vscode';
 import { TestApi6ExampleProvider } from './TestApi6ExampleProvider';
@@ -205,24 +206,26 @@ export async function activate(context: vscode.ExtensionContext) {
 
   updateStatusBar(lastScenario)
 
-  setTimeout(() => {
+  setTimeout(async () => {
     setConfig()
+    await exampleProvider.load()
     vscode.window.registerTreeDataProvider('testApi6ScenarioInspect', scenarioInspectProvider);
     vscode.window.registerTreeDataProvider('testApi6TemplatesInspect', templateInspectProvider);
     vscode.window.registerTreeDataProvider('testApi6VarsInspect', varsInspectProvider);
     vscode.window.registerTreeDataProvider('testApi6DocsInspect', docsInspectProvider);
-    vscode.window.registerTreeDataProvider('testApi6ExampleProvider', exampleProvider);
+    vscode.window.registerTreeDataProvider('testApi6Example', exampleProvider);
     vscode.window.registerTreeDataProvider('testApi6Global', globalProvider);
     vscode.window.registerTreeDataProvider('testApi6History', historyProvider);
     vscode.window.registerTreeDataProvider('testApi6Local', localProvider);
     vscode.window.registerTreeDataProvider('testApi6Profile', profileProvider);
-    exampleProvider.load()
   })
 
   context.subscriptions.push(vscode.commands.registerCommand('testapi6.openExample', async (h: any) => {
-    const content = await exampleProvider.getContent(h.des)
+    const content = await exampleProvider.getContent(h.info.url)
+    const fname = extname(h.info.url.toLowerCase())
+    const ftype = fname === '.md' ? 'markdown' : fname === '.yaml' ? 'yaml' : 'text'
     const document = await vscode.workspace.openTextDocument({
-      language: 'yaml',
+      language: ftype,
       content,
     })
     await vscode.window.showTextDocument(document, vscode.ViewColumn.Two);
@@ -350,6 +353,13 @@ export async function activate(context: vscode.ExtensionContext) {
     debugLog.clear()
     try {
       let scenarioPath = h instanceof TestApi6Item ? h.src : ((h?.scheme === 'file' && h?.path) || vscode.window.activeTextEditor?.document.uri.fsPath)
+      if (!existsSync(scenarioPath)) {
+        const textContent = vscode.window.activeTextEditor?.document.getText() as string
+        if (textContent) {
+          scenarioPath = join(tmpdir(), 'testapi6.untitled.yaml')
+          writeFileSync(scenarioPath, textContent)
+        }
+      }
       const { scenarioFile = '', isClose = false } = getFileRun(scenarioPath, lastScenario)
       let decryptPassword = ''
       if (scenarioFile?.endsWith('.encrypt')) {

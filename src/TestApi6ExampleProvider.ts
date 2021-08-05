@@ -1,49 +1,23 @@
-import { loadAll } from 'js-yaml';
+import { sortBy } from 'lodash';
 import fetch from 'node-fetch';
 import 'testapi6/dist/init';
 import * as vscode from 'vscode';
 
+type Child = { name: string, childs: Child[] }
+
 export class TestApi6ExampleProvider implements vscode.TreeDataProvider<TestApi6ExampleItem> {
-  private list = [] as any[]
+  private list = {} as { [name: string]: Child[] }
 
   constructor() { }
 
   async load() {
-    const list = [] as any
     try {
-      const res = await fetch('https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/test/index.yaml', {
+      const res = await fetch('https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/vscode_example.json', {
         method: 'GET'
       })
       const tmp = await res.text()
-      const [cnt] = loadAll(tmp) as any[]
-      const examples = cnt.steps.map((e: any) => e && e['Import']).filter((e: string) => e).map((e: any) => typeof e === 'object' ? e['src'] : e)
-      examples.sort()
-      let tree = examples.reduce((sum: any, e: string) => {
-        const paths = e.split('/')
-        let pt = sum
-        paths.forEach((p, i) => {
-          if (i !== paths.length - 1) {
-            if (!pt[paths[i]]) pt[paths[i]] = {}
-            pt = pt[paths[i]]
-          } else {
-            if (!pt.$files) pt.$files = []
-            pt.$files.push({ name: p, fullpath: e })
-          }
-        })
-        return sum
-      }, {})
-      tree = tree['examples']
-      Object.keys(tree).forEach(k => {
-        if (k !== '$files') {
-          list.push(new TestApi6ExampleItem('folder', k, k, tree[k], vscode.TreeItemCollapsibleState.Collapsed))
-        } else {
-          tree[k].forEach((e: any) => {
-            list.push(new TestApi6ExampleItem('file', e.name, `https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/test/${e.fullpath}`, {}, vscode.TreeItemCollapsibleState.None))
-          })
-        }
-      })
+      this.list = JSON.parse(tmp) as any
     } finally {
-      this.list = list
       this.refresh()
     }
   }
@@ -70,18 +44,24 @@ export class TestApi6ExampleProvider implements vscode.TreeDataProvider<TestApi6
   async getChildren(element?: TestApi6ExampleItem) {
     let list = []
     if (!element) {
-      list = this.list
+      for (const name in this.list) {
+        let rootPath = ''
+        const childs = this.list[name]
+        list.push(new TestApi6ExampleItem('folder', name.toUpperCase(), '', { rootPath: `${rootPath}${name}/`, childs }, vscode.TreeItemCollapsibleState.Collapsed));
+      }
     } else {
-      const tree = element.info
-      Object.keys(tree).forEach(k => {
-        if (k !== '$files') {
-          list.push(new TestApi6ExampleItem('folder', k, k, tree[k], vscode.TreeItemCollapsibleState.Collapsed))
+      const rootPath = element.info.rootPath
+      sortBy(element.info.childs, ['name'])
+      const listFolders = []
+      for (const item of element.info.childs) {
+        const { name, childs } = item
+        if (!childs) {
+          list.push(new TestApi6ExampleItem('file', name, '', { url: `https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/${rootPath}${name}` }, vscode.TreeItemCollapsibleState.None))
         } else {
-          tree[k].forEach((e: any) => {
-            list.push(new TestApi6ExampleItem('file', e.name, `https://raw.githubusercontent.com/doanthuanthanh88/testapi6/main/test/${e.fullpath}`, {}, vscode.TreeItemCollapsibleState.None))
-          })
+          listFolders.push(new TestApi6ExampleItem('folder', name, '', { rootPath: `${rootPath}${name}/`, childs }, vscode.TreeItemCollapsibleState.Collapsed));
         }
-      })
+      }
+      list = list.concat(listFolders)
     }
     return list
   }
@@ -97,7 +77,7 @@ export class TestApi6ExampleItem extends vscode.TreeItem {
     public collapsibleState: vscode.TreeItemCollapsibleState,
   ) {
     super('', collapsibleState);
-    this.label = (tag === 'file' ? 'ⓘ ' : '') + this.title
+    this.label = (tag === 'file' ? (!info.url.includes('/examples/assets/') ? '‣ ' : '- ') : '') + this.title
     this.description = this.des
     this.tooltip = this.des
     this.contextValue = tag
